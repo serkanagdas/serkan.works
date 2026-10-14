@@ -3,78 +3,58 @@ import '../styles/global.css';
 
 const projects = [
   {
-    num: '01',
     title: 'Eser Tarama',
     role: 'Full-stack · mimari + geliştirme',
-    desc: 'Nadir eser dijitalleştirme "fabrika hattı". Çok lokasyonda taranan eserler tek havuzda toplanır, kontrolörler sayfa seviyesinde kabul/red verir, her işlem kanıtlı loglanır, maaş ve cihaz raporları çıkar, onaylanan paketler teslim edilir.',
-    stack: ['Laravel 13', 'PostgreSQL', 'Tailwind 4', 'Blade', 'Kuyruk/Job'],
-    href: '#',
+    desc: 'Nadir eser dijitalleştirme "fabrika hattı". Çok lokasyonda taranan eserler tek havuzda toplanır, sayfa seviyesinde kabul/red, kanıtlı log, maaş ve cihaz raporları.',
+    stack: ['Laravel 13', 'PostgreSQL', 'Tailwind 4', 'Queue/Job'],
   },
   {
-    num: '02',
     title: 'PDKS Analiz Platformu',
     role: 'Full-stack · analiz + pitchdeck',
-    desc: 'Personel takip sistemlerinin veri analizi ve yatay raporlama ekranları. Yönetici panelinde zamansal veri görselleştirmeleri; müşteri sunumu için ayrı bir pitchdeck uygulaması.',
-    stack: ['Next.js 16', 'React 19', 'Drizzle ORM', 'PostgreSQL', 'pnpm'],
-    href: '#',
+    desc: 'Personel takip verisinin zamansal görselleştirmesi ve yatay raporlama ekranları. Yönetici paneli + müşteri sunum uygulaması.',
+    stack: ['Next.js 16', 'React 19', 'Drizzle', 'PostgreSQL'],
   },
   {
-    num: '03',
     title: 'e-Door Kurumsal Site',
     role: 'Frontend',
-    desc: 'Şirketin vitrini — statik site, hızlı ve temiz. İçerik yönetimi basit tutuldu; performans öncelikli, build-time render yaklaşımı.',
+    desc: 'Şirket vitrini — statik, hızlı, temiz. Build-time render, sade içerik yönetimi, performans öncelikli.',
     stack: ['Astro 5', 'Tailwind 3', 'MDX'],
-    href: '#',
   },
   {
-    num: '04',
     title: 'Hermes & Agent Orkestrasyonu',
     role: 'Kişisel proje · 7/24',
-    desc: 'Kendi LLM agent ekosistemim. OpenHands işçileri 7/24 çalışıyor: Linear issue alır → branch açar → PR biter. Kokpitte (OpenCode + Zed) sadece izliyorum, arada kendi feature\'larımı yazıyorum.',
-    stack: ['Ollama', 'OpenHands', 'Docker', 'Python', 'Linear API', 'Tailscale'],
-    href: '#',
+    desc: 'Kendi LLM agent ekosistemim. OpenHands işçileri 7/24: Linear issue → branch → PR. Ben kokpitte izliyorum.',
+    stack: ['Ollama', 'OpenHands', 'Docker', 'Linear API'],
   },
   {
-    num: '05',
     title: 'Şirket Sunucusu Mimarisi',
     role: 'Altyapı · planlama',
-    desc: 'Tek fiziksel sunucu, Proxmox üzerinde 3 VM: DMZ (public), iç dünya (Tailscale-only) ve "isyan-hane" (agentlar). Blast radius mantığıyla güvenlik katmanları; Plane, GitLab, OpenHands ve demo uygulamalar bu haritada yaşıyor.',
-    stack: ['Proxmox', 'Docker', 'Traefik', 'Tailscale', 'Cloudflare Tunnel', 'AdGuard'],
-    href: '#',
+    desc: 'Tek fiziksel sunucu, Proxmox üzerinde 3 VM: DMZ, iç dünya (Tailscale-only) ve agent laboratuvarı. Blast-radius güvenliği.',
+    stack: ['Proxmox', 'Traefik', 'Tailscale', 'Cloudflare'],
   },
   {
-    num: '06',
-    title: 'Halısaha Rezervasyon Platformu',
+    title: 'Halısaha Rezervasyon',
     role: 'Side project · fikir aşaması',
-    desc: 'Hafta sonu halısaza maç bulmanın Reisvari yollarından kurtulmak. Saha + oyuncu eşleştirme, dinamik takım kurma ve rezervasyon akışı. Yaz aylarının projesi.',
-    stack: ['PHP', 'PostgreSQL', 'Tailwind', 'Livewire'],
-    href: '#',
+    desc: 'Saha + oyuncu eşleştirme, dinamik takım kurma, rezervasyon akışı. Hafta sonu maç derdine son.',
+    stack: ['PHP', 'PostgreSQL', 'Livewire'],
     wip: true,
   },
 ];
 
 const stack = [
-  { group: 'Backend', items: ['PHP / Laravel', 'PostgreSQL', 'Python', 'REST & GraphQL', 'Redis/queue mantığı'] },
-  { group: 'Frontend', items: ['JavaScript', 'Astro', 'Tailwind CSS', 'React / Next.js', 'Blade'] },
-  { group: 'Altyapı', items: ['Docker / Compose', 'Proxmox (VM)', 'Tailscale', 'Caddy / Traefik', 'UmbrelOS'] },
-  { group: 'Yapay Zeka', items: ['Ollama', 'LM Studio', 'OpenHands', 'Agentik sistemler', 'Yerel LLM'] },
+  { group: 'Backend', items: ['PHP / Laravel', 'PostgreSQL', 'Python', 'REST & GraphQL', 'Redis / Queue'] },
+  { group: 'Frontend', items: ['JavaScript', 'Astro', 'Tailwind', 'React / Next.js'] },
+  { group: 'Altyapı', items: ['Docker', 'Proxmox', 'Tailscale', 'Caddy / Traefik'] },
+  { group: 'Yapay Zeka', items: ['Ollama', 'OpenHands', 'Agentik sistemler'] },
 ];
 
 const hobbies = [
-  { icon: '🥊', title: 'Kickboks', desc: 'Pazartesi ve çarşamba akşamları ringteyim. Stresin en sağlıklı çıkış yolu.', when: 'Pzt / Çar' },
-  { icon: '🏋️', title: 'Fitness', desc: 'Haftaiçi her gün. Disiplinin kendisi. Kod kadar kası da besler.', when: 'Her gün' },
-  { icon: '⚽', title: 'Halısaza Futbol', desc: 'Hafta sonu sabahı ekiple maç. Rezervasyon platformu fikri de buradan doğdu.', when: 'Hafta sonu' },
-  { icon: '🚴', title: 'Bisiklet & Tenis', desc: 'Yol ve dağ bisikleti; kortta raket. Sabahın ilk ışıkları bana ait.', when: 'Esnek' },
-  { icon: '🎧', title: 'Hip-hop & Rap', desc: 'Kanye, Kendrick, J. Cole. Derin bir plak koleksiyonu ve saatlerce süren çalma listeleri.', when: '7/24' },
-  { icon: '⌚', title: 'Mekanik Saatler', desc: 'Saatlerin mekanik dünyasına tutku. Titanyum kasalar, otomatik kalibreler ve el işçiliği.', when: 'Koleksiyon' },
-];
-
-const roles = [
-  'Yazılım Mühendisi',
-  'Self-host fanatiği',
-  'Kickboksçu',
-  'Agent kuran adam',
-  'PostgreSQL tiryakisi',
+  { icon: '🥊', title: 'Kickboks', when: 'Pzt / Çar' },
+  { icon: '🏋️', title: 'Fitness', when: 'Her gün' },
+  { icon: '⚽', title: 'Halısaha', when: 'Hafta sonu' },
+  { icon: '🚴', title: 'Bisiklet', when: 'Sabah' },
+  { icon: '🎧', title: 'Hip-hop', when: '7/24' },
+  { icon: '⌚', title: 'Saatler', when: 'Koleksiyon' },
 ];
 ---
 
@@ -84,302 +64,290 @@ const roles = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Serkan Ağdaş — Yazılım Mühendisi</title>
-    <meta name="description" content="Serkan Ağdaş — yazılım mühendisi, self-host fanatiği, agent kuran adam. Projelerim, stack'im ve hobilerim." />
+    <meta name="description" content="Serkan Ağdaş — yazılım mühendisi, self-host fanatiği, agent kuran adam." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <nav>
-      <div class="nav-inner">
-        <a href="#" class="nav-logo">serkan<em>.me</em></a>
-        <div class="nav-links">
-          <a href="#hakkinda">hakkımda</a>
-          <a href="#projeler">projeler</a>
-          <a href="#stack">stack</a>
-          <a href="#hosgeldin">hobiler</a>
-          <a href="#iletisim">iletişim</a>
-        </div>
-      </div>
-    </nav>
-
-    <!-- HERO -->
-    <header class="hero">
-      <div class="wrap">
-        <div class="hero-prompt">serkan@umbrel <b>~</b> $ ./introduce.sh <span class="cursor" style="animation:none"></span></div>
-        <h1>SERKAN<br /><span class="serif">Ağdaş</span></h1>
-        <div class="hero-roles"><span id="typed"></span><span class="cursor"></span></div>
-        <div class="hero-status"><span class="dot"></span> Yeni işlere ve projelere açığım</div>
-        <div class="hero-ctas">
-          <a href="#projeler" class="btn btn-primary">Projeleri gör →</a>
-          <a href="#terminal" class="btn btn-ghost">Benimle konuş</a>
-        </div>
-        <div class="hero-scroll">↓ scroll</div>
-      </div>
-    </header>
-
-    <!-- MARQUEE -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track">
-        <span>PHP</span><span>Laravel</span><span>PostgreSQL</span><span>JavaScript</span><span>Astro</span><span>Tailwind</span><span>Docker</span><span>Proxmox</span><span>Tailscale</span><span>Ollama</span><span>OpenHands</span><span>Next.js</span><span>Python</span><span>UmbrelOS</span>
-        <span>PHP</span><span>Laravel</span><span>PostgreSQL</span><span>JavaScript</span><span>Astro</span><span>Tailwind</span><span>Docker</span><span>Proxmox</span><span>Tailscale</span><span>Ollama</span><span>OpenHands</span><span>Next.js</span><span>Python</span><span>UmbrelOS</span>
-      </div>
+    <div class="bg" aria-hidden="true">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-noise"></div>
     </div>
 
-    <!-- HAKKINDA -->
-    <section id="hakkinda">
-      <div class="wrap">
-        <div class="sec-head reveal">
-          <div class="sec-kicker">01 — Hakkımda</div>
-          <h2 class="sec-title">Kod yazarım, <span class="serif">spor yaparım</span>, aralarında sunucu kurarım.</h2>
-        </div>
-        <div class="about-grid">
-          <div class="about-text reveal">
-            <p>
-              2002 doğumlu, <strong>yazılım mühendisliğinden yeni mezun</strong> bir geliştiriciyim.
-              Günümün çoğunu <span class="hl">PHP, PostgreSQL ve JavaScript</span> ekosisteminde geçiriyorum;
-              modern frontend tarafında Astro ve Tailwind, backend tarafında Laravel ve Next.js benim doğal
-              habitatım.
-            </p>
-            <p>
-              <span class="serif">İlgi alanım sadece kod yazmak değil</span> — kodun çalıştığı yeri de kurarım.
-              Evimde ve sunucumda Proxmox, Docker, Tailscale ve kendi agent orkestrasyonumla dolu bir
-              altyapı var. Açık kaynak araçlara ve <span class="hl">yerel LLM'lere</span> (Ollama, LM Studio)
-              inanıyorum; verinin dışarı çıkmasını sevmem.
-            </p>
-            <p>
-              Gündüz kendi feature'larımı yazarım, gece <strong>agent işçilerim</strong> issue'dan PR'a kadar
-              işi bitirsin. Boş zamanlarımda ringte, kortta, pedalda ya da plak çalarında bulursun.
-            </p>
-          </div>
-          <div class="fact-card reveal">
-            <div class="row"><span class="k">isim</span><span class="v">Serkan Ağdaş</span></div>
-            <div class="row"><span class="k">doğum</span><span class="v"><b>2002</b></span></div>
-            <div class="row"><span class="k">ünvan</span><span class="v">Yazılım Mühendisi</span></div>
-            <div class="row"><span class="k">odak</span><span class="v">Full-stack + Altyapı</span></div>
-            <div class="row"><span class="k">stack</span><span class="v">PHP · JS · PG · Docker</span></div>
-            <div class="row"><span class="k">çalışma</span><span class="v">Remote / hibrit</span></div>
-            <div class="row"><span class="k">durum</span><span class="v"><b>müsait</b> ✓</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <nav class="dock">
+      <a href="#" class="dock-logo">serkan<em>.me</em></a>
+      <a href="#isler" class="link keep">işler</a>
+      <a href="#profil" class="link keep">profil</a>
+      <a href="#stack" class="link">stack</a>
+      <a href="#terminal" class="link">terminal</a>
+      <a href="#iletisim" class="dock-cta">yaz →</a>
+    </nav>
 
-    <!-- PROJELER -->
-    <section id="projeler">
-      <div class="wrap">
-        <div class="sec-head reveal">
-          <div class="sec-kicker">02 — Projeler</div>
-          <h2 class="sec-title">Yaptıklarım, <span class="serif">yapmakta olduklarım</span></h2>
-          <p class="sec-sub">Şirket işleri, kişisel projeler ve 7/24 çalışan altyapı — hepsi burada.</p>
+    <main class="wrap">
+      <!-- HERO -->
+      <header class="hero reveal in">
+        <div class="eyebrow"><span class="dot"></span> müsait — yeni projelere açığım</div>
+        <h1>Serkan <span class="grad">Ağdaş</span></h1>
+        <div class="hero-roles"><span id="typed">Yazılım Mühendisi</span><span class="cursor"></span></div>
+        <p class="hero-sub">
+          <b>Full-stack yazılım mühendisi.</b> PHP, PostgreSQL ve JavaScript ile ürün;
+          Docker, Proxmox ve agent'larla altyapı kurarım.
+        </p>
+        <div class="hero-ctas">
+          <a href="#isler" class="btn btn-white">İşleri gör <span>→</span></a>
+          <a href="#terminal" class="btn btn-glass">$ terminal'i aç</a>
         </div>
-        <div class="projects-list">
-          {projects.map((p) => (
-            <a href={p.href} class:list={['project', 'reveal', { wip: p.wip }]}>
-              <div class="project-num">{p.num}</div>
-              <div>
-                <h3>{p.title}{p.wip && <span style="font-size:12px;color:var(--amber);font-family:var(--font-mono);margin-left:10px">WIP</span>}</h3>
+      </header>
+
+      <!-- BENTO -->
+      <section class="bento">
+
+        <!-- PROJELER: carousel, scroll yok -->
+        <article class="glass span-7 reveal" id="isler">
+          <div class="card-top">
+            <div class="card-kicker"><i></i>Seçili işler</div>
+            <div class="proj-count"><span id="proj-index">01</span> / 06</div>
+          </div>
+          <div class="proj-stage" id="proj-stage">
+            {projects.map((p, i) => (
+              <div class:list={['proj', { active: i === 0 }]} data-proj={i}>
+                <h3>{p.title}{p.wip && <span class="wip-pill">WIP</span>}</h3>
                 <div class="role">{p.role}</div>
                 <p>{p.desc}</p>
-                <div class="chips">
-                  {p.stack.map((s) => <span class="chip">{s}</span>)}
-                </div>
+                <div class="chips">{p.stack.map((s) => <span class="chip">{s}</span>)}</div>
               </div>
-              <div class="project-link">incele →</div>
-            </a>
+            ))}
+          </div>
+          <div class="proj-nav">
+            <div class="dots" id="proj-dots">
+              {projects.map((_, i) => (
+                <button class:list={['dot-btn', { on: i === 0 }]} data-dot={i} aria-label={'Proje ' + (i + 1)}></button>
+              ))}
+            </div>
+            <div class="arrows">
+              <button class="arrow-btn" id="proj-prev" aria-label="Önceki">←</button>
+              <button class="arrow-btn" id="proj-next" aria-label="Sonraki">→</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- PROFİL -->
+        <aside class="glass span-5 reveal" id="profil">
+          <div class="card-top">
+            <div class="card-kicker"><i></i>profil</div>
+            <div class="proj-count">TR · <b id="clock" style="color:var(--accent)">--:--</b></div>
+          </div>
+          <div class="profile-head">
+            <div class="avatar">SA</div>
+            <div>
+              <h3>Serkan Ağdaş</h3>
+              <div class="sub">yazılım mühendisi · 2002 · remote/hibrit</div>
+            </div>
+          </div>
+          <div class="fact-rows">
+            <div class="row"><span class="k">odak</span><span class="v">Full-stack + Altyapı</span></div>
+            <div class="row"><span class="k">habitat</span><span class="v">PHP · JS · PG · Docker</span></div>
+            <div class="row"><span class="k">inanç</span><span class="v">self-host · yerel LLM</span></div>
+            <div class="row"><span class="k">durum</span><span class="v"><b>müsait ✓</b></span></div>
+          </div>
+          <div class="sysbar">
+            <span><i class="ok"></i>agents: 3 online</span>
+            <span>proxmox: idle 12%</span>
+            <span>☕ 2. fincan</span>
+          </div>
+        </aside>
+
+        <!-- STACK -->
+        <article class="glass span-4 reveal" id="stack">
+          <div class="card-top"><div class="card-kicker"><i></i>stack</div></div>
+          {stack.map((g) => (
+            <div class="stack-group">
+              <h5>{g.group}</h5>
+              <div class="pills">{g.items.map((i) => <span class="pill">{i}</span>)}</div>
+            </div>
           ))}
-        </div>
-      </div>
-    </section>
+        </article>
 
-    <!-- STACK -->
-    <section id="stack">
-      <div class="wrap">
-        <div class="sec-head reveal">
-          <div class="sec-kicker">03 — Stack</div>
-          <h2 class="sec-title">Alet <span class="serif">çantam</span></h2>
-        </div>
-        <div class="stack-grid">
-          {stack.map((col) => (
-            <div class="stack-col reveal">
-              <h4>{col.group}</h4>
-              <ul>
-                {col.items.map((i) => <li>{i}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- HOBILER -->
-    <section id="hosgeldin">
-      <div class="wrap">
-        <div class="sec-head reveal">
-          <div class="sec-kicker">04 — Hobiler</div>
-          <h2 class="sec-title">Ekran kapalıyken <span class="serif">ne yaparım?</span></h2>
-          <p class="sec-sub">Kod kadar hayat da var. Ring, kort, pedal ve plak — hepsi burada.</p>
-        </div>
-        <div class="hobby-grid">
-          {hobbies.map((h) => (
-            <div class="hobby reveal">
-              <div class="icon">{h.icon}</div>
-              <h4>{h.title}</h4>
-              <p>{h.desc}</p>
-              <span class="when">▸ {h.when}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- TERMINAL -->
-    <section id="terminal">
-      <div class="wrap">
-        <div class="sec-head reveal">
-          <div class="sec-kicker">05 — İnteraktif</div>
-          <h2 class="sec-title">Benimle <span class="serif">konuş</span></h2>
-          <p class="sec-sub">Evet, bu siteyi yapan tip terminalcilerdendir. Bir şeyler yazmayı dene.</p>
-        </div>
-        <div class="term reveal">
-          <div class="term-bar">
-            <div class="lights"><i></i><i></i><i></i></div>
-            <span class="title">serkan@umbrel: ~ — zsh</span>
+        <!-- TERMİNAL -->
+        <article class="glass span-4 reveal" id="terminal">
+          <div class="card-top">
+            <div class="card-kicker"><i></i>oyun alanı</div>
+            <div class="proj-count">zsh</div>
           </div>
-          <div class="term-body" id="term-body">
-            <div class="out">
-              <span class="cmd"><span class="p">serkan@umbrel</span> ~ $ <span class="cmd">whoami</span></span>
+          <div class="term-window">
+            <div class="term-bar">
+              <div class="lights"><i></i><i></i><i></i></div>
+              <span class="title">serkan@umbrel: ~</span>
             </div>
-            <div class="out">Serkan Ağdaş — yazılım mühendisi, self-host fanatiği, kickboksçu.</div>
-            <div class="out">Bir komut dene: <span class="warn">help</span>, <span class="warn">hakkinda</span>, <span class="warn">projeler</span>, <span class="warn">stack</span>, <span class="warn">hobiler</span>, <span class="warn">iletisim</span>, <span class="warn">sudo</span>, <span class="warn">clear</span></div>
-            <div class="term-input-line">
-              <span class="p">serkan@umbrel ~ $</span>
-              <input id="term-input" type="text" autocomplete="off" spellcheck="false" placeholder="bir komut yaz..." />
+            <div class="term-body" id="term-body">
+              <div class="out">Serkan Ağdaş — mühendis, self-host fanatiği, kickboksçu.</div>
+              <div class="out"><span class="warn">help</span> yaz, gerisi sende.</div>
+              <div class="term-input-line">
+                <span class="p">$</span>
+                <input id="term-input" type="text" autocomplete="off" spellcheck="false" placeholder="help" />
+              </div>
             </div>
           </div>
-        </div>
-        <div class="term-hint">İpucu: <b>help</b> yazıp enter'a bas</div>
-      </div>
-    </section>
+        </article>
 
-    <!-- ILETISIM -->
-    <section id="iletisim">
-      <div class="wrap">
-        <div class="contact-grid">
-          <div class="reveal">
-            <div class="sec-kicker">06 — İletişim</div>
-            <div class="contact-big" style="margin-top:10px">
-              Bir fikrin mi var?<br /><span class="serif">Yaz, konuşalım.</span>
+        <!-- HOBİLER -->
+        <article class="glass span-4 reveal">
+          <div class="card-top"><div class="card-kicker"><i></i>ekran kapalıyken</div></div>
+          <div class="hobby-list">
+            {hobbies.map((h) => (
+              <div class="hobby">
+                <div class="ic">{h.icon}</div>
+                <h4>{h.title}</h4>
+                <span>▸ {h.when}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <!-- ALTYAPI -->
+        <article class="glass span-7 reveal">
+          <div class="card-top">
+            <div class="card-kicker"><i></i>ev sunucusu — blast radius haritası</div>
+          </div>
+          <div class="infra-map">
+            <div class="vm dmz">
+              <span class="tag">DMZ · public</span>
+              <h4>bulut kapısı</h4>
+              <p>Traefik · Cloudflare<br />demo apps</p>
             </div>
-            <p style="color:var(--muted);margin-top:18px;max-width:420px">
-              Proje, iş birliği ya da sadece merhaba demek için — kutusu her zaman açık.
-            </p>
+            <div class="vm inner">
+              <span class="tag">iç dünya · private</span>
+              <h4>kale</h4>
+              <p>Tailscale-only<br />Plane · GitLab · PG</p>
+            </div>
+            <div class="vm lab">
+              <span class="tag">isyan-hane · agents</span>
+              <h4>laboratuvar</h4>
+              <p>OpenHands · Ollama<br />7/24 işçiler</p>
+            </div>
           </div>
-          <div class="contact-links reveal">
-            <a class="contact-link" href="mailto:hello@serkanagdas.me">
-              <span class="l">✉ hello@serkanagdas.me</span><span class="arrow">→</span>
-            </a>
-            <a class="contact-link" href="https://github.com/serkanagdas" target="_blank" rel="noopener">
-              <span class="l">⌥ github.com/serkanagdas</span><span class="arrow">→</span>
-            </a>
-            <a class="contact-link" href="https://linkedin.com/in/serkanagdas" target="_blank" rel="noopener">
-              <span class="l">in linkedin/serkanagdas</span><span class="arrow">→</span>
-            </a>
-            <a class="contact-link" href="https://x.com/serkanagdas" target="_blank" rel="noopener">
-              <span class="l">✦ x.com/serkanagdas</span><span class="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
+          <div class="flow"><span class="sig">●</span> issue → branch → PR → izle <span class="sig">●</span></div>
+          <div class="infra-note">tek makine · proxmox · 3 VM · AdGuard önde</div>
+        </article>
 
-    <footer>
-      <div class="footer-inner">
-        <span>© 2026 Serkan Ağdaş — Astro ile ⚡ yapıldı</span>
-        <span class="clock">Türkiye · <b id="clock">--:--:--</b></span>
-      </div>
-    </footer>
+        <!-- İLETİŞİM -->
+        <article class="glass span-5 reveal" id="iletisim">
+          <div class="card-top"><div class="card-kicker"><i></i>iletişim</div></div>
+          <div class="contact-big">Bir fikrin mi var?<br /><span class="grad">Yaz, konuşalım.</span></div>
+          <p class="contact-sub">Proje, iş birliği ya da sadece merhaba — kutu hep açık.</p>
+          <div class="contact-btns">
+            <a class="cbtn" href="mailto:hello@serkanagdas.me"><span>✉ hello@serkanagdas.me</span><span class="arrow">→</span></a>
+            <a class="cbtn" href="https://github.com/serkanagdas" target="_blank" rel="noopener"><span>⌥ github/serkanagdas</span><span class="arrow">→</span></a>
+            <a class="cbtn" href="https://linkedin.com/in/serkanagdas" target="_blank" rel="noopener"><span>in linkedin/serkanagdas</span><span class="arrow">→</span></a>
+          </div>
+        </article>
+
+      </section>
+
+      <footer>
+        <div class="foot reveal">
+          <span>© 2026 Serkan Ağdaş — Astro ile ⚡</span>
+          <span>liquid glass · bento · <b>scroll yok, keyif var</b></span>
+        </div>
+      </footer>
+    </main>
 
     <script>
-      // ---- Typed roles ----
-      const roles = [
-        'Yazılım Mühendisi',
-        'Self-host fanatiği',
-        'Kickboksçu',
-        'Agent kuran adam',
-        'PostgreSQL tiryakisi',
-      ];
+      // ---- Typed ----
+      const roles = ['Yazılım Mühendisi', 'Self-host fanatiği', 'Kickboksçu', 'Agent kuran adam', 'PostgreSQL tiryakisi'];
       const typed = document.getElementById('typed');
-      let ri = 0, ci = 0, deleting = false;
+      let ri = 0, ci = 0, del = false;
       function tick() {
-        const word = roles[ri];
-        if (!deleting) {
+        const w = roles[ri];
+        if (!del) {
           ci++;
-          typed.textContent = word.slice(0, ci);
-          if (ci === word.length) { deleting = true; setTimeout(tick, 1800); return; }
+          typed.textContent = w.slice(0, ci);
+          if (ci === w.length) { del = true; setTimeout(tick, 1800); return; }
         } else {
           ci--;
-          typed.textContent = word.slice(0, ci);
-          if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
+          typed.textContent = w.slice(0, ci);
+          if (ci === 0) { del = false; ri = (ri + 1) % roles.length; }
         }
-        setTimeout(tick, deleting ? 40 : 85);
+        setTimeout(tick, del ? 38 : 80);
       }
-      setTimeout(tick, 600);
+      setTimeout(tick, 500);
 
-      // ---- Reveal on scroll ----
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-      }, { threshold: 0.12 });
-      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      // ---- Reveal ----
+      const revealEls = [...document.querySelectorAll('.reveal:not(.in)')];
+      const io = new IntersectionObserver((es) => {
+        es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.05, rootMargin: '80px 0px 80px 0px' });
+      revealEls.forEach((el) => io.observe(el));
+      // Fallback: hiçbir kart gizli kalmasın (IO kaçırırsa)
+      setTimeout(() => revealEls.forEach((el) => el.classList.add('in')), 2500);
 
-      // ---- Clock (Istanbul) ----
+      // ---- Spotlight ----
+      document.querySelectorAll('.glass').forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
+      });
+
+      // ---- Clock ----
       const clock = document.getElementById('clock');
       function updateClock() {
-        clock.textContent = new Date().toLocaleTimeString('tr-TR', {
-          hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Istanbul',
-        });
+        clock.textContent = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' });
       }
-      updateClock();
-      setInterval(updateClock, 1000);
+      updateClock(); setInterval(updateClock, 15000);
+
+      // ---- Projects carousel ----
+      const slides = [...document.querySelectorAll('[data-proj]')];
+      const dots = [...document.querySelectorAll('[data-dot]')];
+      const idx = document.getElementById('proj-index');
+      let cur = 0, timer;
+      function go(n) {
+        cur = (n + slides.length) % slides.length;
+        slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+        dots.forEach((d, i) => d.classList.toggle('on', i === cur));
+        idx.textContent = String(cur + 1).padStart(2, '0');
+        restart();
+      }
+      function restart() { clearInterval(timer); timer = setInterval(() => go(cur + 1), 7000); }
+      document.getElementById('proj-next').addEventListener('click', () => go(cur + 1));
+      document.getElementById('proj-prev').addEventListener('click', () => go(cur - 1));
+      dots.forEach((d) => d.addEventListener('click', () => go(Number(d.dataset.dot))));
+      restart();
 
       // ---- Terminal ----
       const body = document.getElementById('term-body');
       const input = document.getElementById('term-input');
-      const responses: Record<string, string> = {
-        help: 'Komutlar: hakkinda · projeler · stack · hobiler · iletisim · sudo · clear',
-        hakkinda: 'Serkan Ağdaş, 2002 doğumlu yazılım mühendisi. PHP + PostgreSQL + JS ekosisteminde full-stack çalışıyor; geceleri Proxmox/Docker altyapısında ve kendi agent orkestrasyonunda.',
-        projeler: '01 Eser Tarama (Laravel+PG) · 02 PDKS Analiz (Next.js) · 03 e-Door Site (Astro) · 04 Hermes & Agent Orkestrasyonu · 05 Şirket Sunucusu Mimarisi (Proxmox) · 06 Halısaha Rezervasyon (WIP)',
-        stack: 'Backend: PHP/Laravel, PostgreSQL, Python\nFrontend: JS, Astro, Tailwind, React/Next.js\nAltyapı: Docker, Proxmox, Tailscale, Caddy/Traefik\nAI: Ollama, LM Studio, OpenHands',
-        hobiler: 'Kickboks (Pzt/Çar) · Fitness (her gün) · Halısaza (hafta sonu) · Bisiklet & tenis · Hip-hop (Kanye, Kendrick, J. Cole) · Mekanik saatler',
-        iletisim: 'hello@serkanagdas.me · github.com/serkanagdas · linkedin.com/in/serkanagdas',
-        sudo: 'üzgünüm, bu sunucuda root yetkisi yok — sadece kahve. ☕',
-        ls: 'projeler/  stack/  hobiler/  sunucular/  saatler/',
-        whoami: 'Serkan Ağdaş — misafir. Hoş geldin.',
+      const responses = {
+        help: 'hakkinda · projeler · stack · hobiler · iletisim · sudo · ls · clear',
+        hakkinda: '2002 · full-stack · PHP+PG+JS · gündüz feature, gece agent orkestrasyonu.',
+        projeler: '01 Eser Tarama · 02 PDKS · 03 e-Door · 04 Hermes Agents · 05 Sunucu Mimarisi · 06 Halısaha (WIP)',
+        stack: 'BE: Laravel/PG/Python · FE: Astro/Tailwind/Next · Infra: Docker/Proxmox/Tailscale · AI: Ollama/OpenHands',
+        hobiler: 'kickboks · fitness · halısaha · bisiklet · hip-hop · mekanik saatler',
+        iletisim: 'hello@serkanagdas.me · github/serkanagdas',
+        sudo: 'root yok — sadece kahve. ☕',
+        ls: 'projeler/ stack/ hobiler/ sunucular/ saatler/',
+        whoami: 'misafir — hoş geldin.',
       };
-      function print(html: string) {
+      function print(html) {
         const div = document.createElement('div');
-        div.className = 'out';
-        div.innerHTML = html;
+        div.className = 'out'; div.textContent = html;
         body.insertBefore(div, input.parentElement);
       }
       input.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
         const raw = input.value.trim();
-        const cmd = raw.toLowerCase();
         if (!raw) return;
-        print(`<span class="cmd"><span class="p">serkan@umbrel</span> ~ $ ${raw}</span>`);
+        print('$ ' + raw);
         input.value = '';
-        if (cmd === 'clear') {
-          document.querySelectorAll('#term-body .out').forEach((el) => el.remove());
-          return;
-        }
-        const res = responses[cmd];
-        if (res) {
-          res.split('\n').forEach((line) => print(line.replace(/</g, '&lt;')));
-        } else {
-          print(`<span class="warn">zsh: command not found: ${raw.replace(/</g, '&lt;')}</span> — <span class="ok">help</span> dene.`);
-        }
+        const cmd = raw.toLowerCase();
+        if (cmd === 'clear') { body.querySelectorAll('.out').forEach((el) => el.remove()); return; }
+        print(responses[cmd] || ('command not found: ' + raw + ' — help dene.'));
         body.scrollTop = body.scrollHeight;
       });
       body.addEventListener('click', () => input.focus());
