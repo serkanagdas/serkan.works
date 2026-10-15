@@ -47,6 +47,19 @@ const projects = [
   },
 ];
 
+const facts = [
+  { k: 'odak', v: 'Full-stack + altyapı' },
+  { k: 'habitat', v: 'PHP · JS · PostgreSQL · Docker' },
+  { k: 'inanç', v: 'Self-host · yerel LLM' },
+  { k: 'durum', v: 'Yeni projelere açık', ok: true },
+];
+
+const stats = [
+  { n: '7/7', l: 'işçi uptime' },
+  { n: '3', l: 'agent rolü' },
+  { n: 'issue→PR', l: 'tam otomatik akış' },
+];
+
 const stack = [
   { group: 'Backend', items: ['PHP / Laravel', 'PostgreSQL', 'Python', 'REST & GraphQL', 'Redis / Queue'] },
   { group: 'Frontend', items: ['JavaScript / TS', 'Astro', 'Tailwind', 'React / Next.js'] },
@@ -55,14 +68,14 @@ const stack = [
 ];
 
 const hobbies = [
-  { icon: '🥊', title: 'Kickboks', when: 'Pzt / Çar' },
-  { icon: '🏋️', title: 'Fitness', when: 'Her gün' },
-  { icon: '⚽', title: 'Halısaha', when: 'Hafta sonu' },
-  { icon: '🚴', title: 'Bisiklet', when: 'Sabah' },
-  { icon: '🎾', title: 'Tenis', when: 'Serbest' },
-  { icon: '🎧', title: 'Hip-hop', when: '7/24' },
-  { icon: '⌚', title: 'Saatler', when: 'Koleksiyon' },
-  { icon: '🖥️', title: 'Oyun sunucusu', when: 'Arkadaşlarla' },
+  { t: 'Kickboks', w: 'Pzt · Çar' },
+  { t: 'Fitness', w: 'Her gün' },
+  { t: 'Halısaha', w: 'Hafta sonu' },
+  { t: 'Bisiklet', w: 'Sabah' },
+  { t: 'Tenis', w: 'Serbest' },
+  { t: 'Hip-hop', w: '7/24' },
+  { t: 'Saatler', w: 'Koleksiyon' },
+  { t: 'Oyun sunucusu', w: 'Arkadaşlarla' },
 ];
 
 const pipeline = [
@@ -75,12 +88,10 @@ const pipeline = [
 const pipelineItems = pipeline.flatMap((p, i) => (i === 0 ? [p] : [{ arrow: true }, p]));
 
 const agentRoles = [
-  { icon: '◈', title: 'Koordinatör — Hermes', desc: 'umbrelOS üzerinde container içinde çalışır. Vault, Linear, GitHub, cron ve sunucu yönetimi ona bağlı. İşi dağıtır, durumu takip eder, raporu tutar.' },
-  { icon: '▸', title: 'İşçi — OpenHands', desc: 'Sunucuda 7/7 ayakta. Linear issue gelir, branch açar, kod yazar, PR açar. Arayüz sadece izleme için.' },
-  { icon: '⌘', title: 'Kokpit — OpenCode + Zed', desc: 'Kendi makinem. Gündüz feature dallarına kod pushlar, plan notlarını yazar, işçilerin çıktısını denetler.' },
+  { title: 'Koordinatör — Hermes', desc: 'umbrelOS üzerinde container içinde çalışır. Vault, Linear, GitHub, cron ve sunucu yönetimi ona bağlı. İşi dağıtır, durumu takip eder, raporu tutar.' },
+  { title: 'İşçi — OpenHands', desc: 'Sunucuda 7/7 ayakta. Linear issue gelir, branch açar, kod yazar, PR açar. Arayüz sadece izleme için.' },
+  { title: 'Kokpit — OpenCode + Zed', desc: 'Kendi makinem. Gündüz feature dallarına kod pushlar, plan notlarını yazar, işçilerin çıktısını denetler.' },
 ];
-
-const roles = ['Yazılım Mühendisi', 'Full-stack Geliştirici', 'Altyapı Kuran Adam', 'Agent Mühendisi'];
 ---
 
 <!doctype html>
@@ -90,10 +101,13 @@ const roles = ['Yazılım Mühendisi', 'Full-stack Geliştirici', 'Altyapı Kura
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Serkan Ağdaş — Yazılım Mühendisi · serkan.works</title>
     <meta name="description" content="Serkan Ağdaş — yazılım mühendisi. Full-stack ürün, altyapı ve şirket içi yapay zeka otomasyon sistemleri." />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline>
       // tema: flash olmadan sistem tercihi / kalıcı seçim
       (function () {
+        document.documentElement.classList.add('js');
         try {
           var t = localStorage.getItem('theme');
           if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -103,7 +117,7 @@ const roles = ['Yazılım Mühendisi', 'Full-stack Geliştirici', 'Altyapı Kura
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <a class="skip-link" href="#main">İçeriğe geç</a>
@@ -112,52 +126,47 @@ const roles = ['Yazılım Mühendisi', 'Full-stack Geliştirici', 'Altyapı Kura
       <div class="nav-inner">
         <a href="#" class="nav-logo">serkan<em>.works</em></a>
         <div class="nav-links">
-          <a href="#hakkinda">hakkında</a>
-          <a href="#otomasyon">otomasyon</a>
-          <a href="#isler">işler</a>
-          <a href="#stack">stack</a>
-          <a href="#iletisim">iletişim</a>
+          <a href="#hakkinda">Hakkında</a>
+          <a href="#otomasyon">Otomasyon</a>
+          <a href="#isler">İşler</a>
+          <a href="#stack">Stack</a>
+          <a href="#iletisim">İletişim</a>
         </div>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Temayı değiştir" title="Tema">☀︎</button>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Koyu temaya geç">
+          <svg class="icon-light" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.2"></circle>
+            <path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"></path>
+          </svg>
+          <svg class="icon-dark" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
       </div>
     </nav>
 
     <main id="main">
       <!-- HERO -->
       <header class="hero wrap">
-        <div class="eyebrow"><span class="dot" aria-hidden="true"></span> müsait — yeni projelere açığım</div>
-        <h1>Serkan <em>Ağdaş</em></h1>
-        <div class="hero-roles" aria-live="polite"><span id="typed">Yazılım Mühendisi</span><span class="cursor" aria-hidden="true"></span></div>
+        <p class="status"><span class="dot" aria-hidden="true"></span>Yeni projelere açığım</p>
+        <h1>Serkan Ağdaş</h1>
+        <p class="hero-tagline">Yazılım Mühendisi</p>
         <p class="hero-sub">
-          <b>Yazılım mühendisiyim.</b> Full-stack ürün çıkarır, altyapı kurarım — ve şirkette
+          Full-stack ürün çıkarır, altyapı kurarım — ve şirkette
           <b>yapay zeka otomasyon sistemi</b> ile 7/7 çalışan bir agent ekosistemi işletiyorum.
         </p>
         <div class="hero-ctas">
-          <a href="#otomasyon" class="btn btn-primary">Otomasyonu gör <span aria-hidden="true">→</span></a>
-          <a href="#isler" class="btn btn-ghost">İşleri gez</a>
+          <a href="#isler" class="btn btn-primary">İşlerime bak</a>
+          <a href="#iletisim" class="link-arrow">İletişime geç <span class="chev" aria-hidden="true">›</span></a>
         </div>
       </header>
 
       <!-- HAKKINDA -->
-      <section id="hakkinda" class="wrap reveal">
-        <div class="kicker">hakkında</div>
-        <h2 class="section-title">Sade, hızlı, çalışan sistemler.</h2>
+      <section id="hakkinda" class="wrap reveal" aria-labelledby="hakkinda-title">
+        <div class="section-head">
+          <p class="kicker">hakkında</p>
+          <h2 class="section-title" id="hakkinda-title">Sade, hızlı, çalışan sistemler.</h2>
+        </div>
         <div class="about-grid">
-          <aside class="card" aria-label="Profil kartı">
-            <div class="profile-head">
-              <div class="avatar" aria-hidden="true">SA</div>
-              <div>
-                <h3>Serkan Ağdaş</h3>
-                <div class="sub">yazılım mühendisi · 2002 · remote / hibrit</div>
-              </div>
-            </div>
-            <div class="fact-rows">
-              <div class="row"><span class="k">odak</span><span class="v">Full-stack + Altyapı</span></div>
-              <div class="row"><span class="k">habitat</span><span class="v">PHP · JS · PostgreSQL · Docker</span></div>
-              <div class="row"><span class="k">inanç</span><span class="v">self-host · yerel LLM</span></div>
-              <div class="row"><span class="k">durum</span><span class="v"><b>müsait ✓</b></span></div>
-            </div>
-          </aside>
           <div class="about-text">
             <p>
               2002 doğumlu, yazılım mühendisliğinden yeni mezun bir mühendisim. Günlük işim
@@ -169,161 +178,173 @@ const roles = ['Yazılım Mühendisi', 'Full-stack Geliştirici', 'Altyapı Kura
               biçimi. Kodlamaya kokpitte kendi başlıyorum; tekrarlanan işleri
               <b>agent'lara devrediyorum</b> — son kararı ve kodu hep insan denetliyor.
             </p>
-            <div class="about-stats">
-              <div class="stat"><div class="n">7/7</div><div class="l">işçi uptime</div></div>
-              <div class="stat"><div class="n">3</div><div class="l">agent rolü</div></div>
-              <div class="stat"><div class="n">issue→PR</div><div class="l">tam otomatik akış</div></div>
+            <div class="stats">
+              {stats.map((s) => (
+                <div class="stat">
+                  <div class="n">{s.n}</div>
+                  <div class="l">{s.l}</div>
+                </div>
+              ))}
             </div>
+          </div>
+          <aside aria-label="Künye">
+            <p class="kicker">künye</p>
+            <dl class="facts">
+              {facts.map((f) => (
+                <div class="fact">
+                  <dt>{f.k}</dt>
+                  <dd class={f.ok ? 'ok' : undefined}>{f.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <!-- OTOMASYON -->
+      <section id="otomasyon" class="band" aria-labelledby="otomasyon-title">
+        <div class="wrap reveal">
+          <div class="section-head">
+            <p class="kicker">otomasyon</p>
+            <h2 class="section-title" id="otomasyon-title">Şirkette bir yapay zeka otomasyon sistemi kurdum.</h2>
+            <p class="section-sub">
+              İş takibinden koda kadar uzanan, kendi kurduğum agent hattı. Linear'da açılan bir iş,
+              koordinatör agent tarafından işçiye dağıtılır; işçi branch açar, PR gönderir; insan
+              onayı olmadan hiçbir şey merge olmaz. Tüm hafıza Obsidian vault'ta kalıcı.
+            </p>
+          </div>
+          <ol class="pipeline" aria-label="İş akışı">
+            {pipelineItems.map((p) => ('arrow' in p
+              ? <li class="arrow" aria-hidden="true">→</li>
+              : <li class="step"><span class="step-label">{p.label}</span><span class="step-sub">{p.sub}</span></li>
+            ))}
+          </ol>
+          <div class="roles">
+            {agentRoles.map((r, i) => (
+              <div class="role">
+                <span class="role-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h4>{r.title}</h4>
+                <p>{r.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <!-- OTOMASYON (featured, inverted) -->
-      <section class="featured reveal" id="otomasyon" aria-labelledby="oto-title">
-        <div class="kicker">yapay zeka otomasyonu</div>
-        <h2 class="section-title" id="oto-title">Şirkette yapay zeka otomasyon sistemi kurdum.</h2>
-        <p class="section-sub">
-          İş takibinden koda kadar uzanan, kendi kurdığum agent hattı. Linear'da açılan bir iş,
-          koordinatör agent tarafından işçiye dağıtılır; işçi branch açar, PR gönderir; insan
-          onayı olmadan hiçbir şey merge olmaz. Tüm hafıza Obsidian vault'ta kalıcı.
-        </p>
-        <ol class="pipeline" aria-label="İş akışı">
-          {pipelineItems.map((p) => ('arrow' in p
-            ? <li class="pipe-arrow" aria-hidden="true">→</li>
-            : <li class="pipe-node"><span>{p.label}</span><small>{p.sub}</small></li>
-          ))}
-        </ol>
-        <div class="agent-roles">
-          {agentRoles.map((r) => (
-            <div class="role-card">
-              <h4><span class="icon" aria-hidden="true">{r.icon}</span>{r.title}</h4>
-              <p>{r.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <!-- İŞLER -->
-      <section id="isler" class="wrap reveal">
-        <div class="kicker">işler</div>
-        <h2 class="section-title">Seçili projeler.</h2>
-        <p class="section-sub">Kurumsal sistemlerden kişisel altyapı projelerine — her biri gerçekten çalışan, sürdürülen işler.</p>
-        <div class="proj-grid">
+      <section id="isler" class="wrap reveal" aria-labelledby="isler-title">
+        <div class="section-head">
+          <p class="kicker">işler</p>
+          <h2 class="section-title" id="isler-title">Seçili projeler.</h2>
+          <p class="section-sub">Kurumsal sistemlerden kişisel altyapı projelerine — her biri gerçekten çalışan, sürdürülen işler.</p>
+        </div>
+        <div class="projects">
           {projects.map((p) => (
-            <article class="proj">
-              <div class="proj-top">
-                <div>
+            <article class="project">
+              <div>
+                <div class="project-head">
                   <h3>{p.title}</h3>
-                  <div class="role">{p.role}</div>
+                  {p.wip && <span class="badge">devam ediyor</span>}
                 </div>
-                {p.wip && <span class="wip">WIP</span>}
+                <p class="project-role">{p.role}</p>
               </div>
-              <p>{p.desc}</p>
-              <div class="chips">{p.stack.map((s) => <span class="chip">{s}</span>)}</div>
+              <div>
+                <p class="project-desc">{p.desc}</p>
+                <p class="project-stack">{p.stack.join(' · ')}</p>
+              </div>
             </article>
           ))}
         </div>
       </section>
 
       <!-- STACK -->
-      <section id="stack" class="wrap reveal">
-        <div class="kicker">stack</div>
-        <h2 class="section-title">Ne ile çalışıyorum.</h2>
-        <p class="section-sub">Geniş ama derin — her katmanda üretim tecrübesi olan bir yığın.</p>
-        <div class="stack-grid">
-          {stack.map((g) => (
-            <div class="stack-group">
-              <h3>{g.group}</h3>
-              <div class="pills">{g.items.map((i) => <span class="pill">{i}</span>)}</div>
-            </div>
-          ))}
+      <section id="stack" class="band" aria-labelledby="stack-title">
+        <div class="wrap reveal">
+          <div class="section-head">
+            <p class="kicker">stack</p>
+            <h2 class="section-title" id="stack-title">Ne ile çalışıyorum.</h2>
+            <p class="section-sub">Geniş ama derin — her katmanda üretim tecrübesi olan bir yığın.</p>
+          </div>
+          <div class="stack-grid">
+            {stack.map((g) => (
+              <div class="stack-group">
+                <h3>{g.group}</h3>
+                <ul>{g.items.map((i) => <li>{i}</li>)}</ul>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <!-- HOBİLER -->
-      <section id="ekran-kapaliyken" class="wrap reveal">
-        <div class="kicker">ekran kapalıyken</div>
-        <h2 class="section-title">Müdahaleye açık alanlar.</h2>
-        <p class="section-sub">Kod dışında hayatın devam ettiği yerler — bu düzen ne kadar disiplinliysem kod da o kadar düzenli.</p>
-        <div class="hobby-grid">
-          {hobbies.map((h) => (
-            <div class="hobby">
-              <span class="icon" aria-hidden="true">{h.icon}</span>
-              <div>
-                <div class="t">{h.title}</div>
-                <div class="w">{h.when}</div>
-              </div>
-            </div>
-          ))}
+      <!-- EKRAN KAPALIYKEN -->
+      <section id="ekran-kapaliyken" class="wrap reveal" aria-labelledby="hobi-title">
+        <div class="section-head">
+          <p class="kicker">ekran kapalıyken</p>
+          <h2 class="section-title" id="hobi-title">Müdahaleye açık alanlar.</h2>
+          <p class="section-sub">Kod dışında hayatın devam ettiği yerler — bu düzen ne kadar disiplinliysem kod da o kadar düzenli.</p>
         </div>
+        <ul class="hobbies">
+          {hobbies.map((h) => (
+            <li>
+              <span class="t">{h.t}</span>
+              <span class="w">{h.w}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <!-- İLETİŞİM -->
-      <footer class="footer wrap" id="iletisim">
-        <h2>Bir sistem kuram mı gerekiyor?</h2>
-        <p>Yeni projelere, danışmanlığa ve iyi bir sohbete açığım. En hızlı yol e-posta ya da GitHub.</p>
-        <div class="footer-ctas">
-          <a class="btn btn-primary" href="https://github.com/serkanagdas" rel="noopener">GitHub ↗</a>
-          <a class="btn btn-ghost" href="mailto:merhaba@serkan.works">merhaba@serkan.works</a>
-        </div>
-        <div class="footer-meta">
-          <span>© 2026 Serkan Ağdaş — serkan.works</span>
-          <span>Türkiye · <span class="clock" id="clock">--:--</span> (TSİ)</span>
+      <footer id="iletisim" class="footer" aria-labelledby="iletisim-title">
+        <div class="wrap">
+          <h2 id="iletisim-title">Bir sistem kuralım.</h2>
+          <p>Yeni projelere, danışmanlığa ve iyi bir sohbete açığım — en hızlı yol e-posta ya da GitHub.</p>
+          <div class="footer-ctas">
+            <a class="btn btn-primary" href="mailto:merhaba@serkan.works">merhaba@serkan.works</a>
+            <a class="btn btn-ghost" href="https://github.com/serkanagdas" rel="noopener">GitHub ↗</a>
+          </div>
+          <div class="footer-meta">
+            <span>© 2026 Serkan Ağdaş — serkan.works</span>
+            <span>Türkiye · <span class="clock" id="clock">--:--</span> (TSİ)</span>
+          </div>
         </div>
       </footer>
     </main>
 
-    <script define:vars={{ roles }}>
-      // tema toggle
-      var root = document.documentElement;
-      var toggle = document.getElementById('theme-toggle');
-      function syncIcon() {
-        toggle.textContent = root.dataset.theme === 'dark' ? '☾' : '☀︎';
-        toggle.title = root.dataset.theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç';
+    <script>
+      // tema toggle (flash'sız başlangıç head'deki inline script'te)
+      const root = document.documentElement;
+      const toggle = document.getElementById('theme-toggle')!;
+
+      function syncThemeLabel() {
+        toggle.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç');
       }
-      syncIcon();
+      syncThemeLabel();
+
       toggle.addEventListener('click', () => {
-        var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
         root.dataset.theme = next;
         try { localStorage.setItem('theme', next); } catch (e) {}
-        syncIcon();
+        syncThemeLabel();
       });
 
-      // yazma efekti (reduced-motion'da sabit başlık)
-      var typed = document.getElementById('typed');
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        typed.textContent = roles[0];
-      } else {
-        var ri = 0, ci = 0, deleting = false;
-        (function tick() {
-          var full = roles[ri];
-          typed.textContent = full.slice(0, ci);
-          if (!deleting) {
-            if (ci < full.length) { ci++; setTimeout(tick, 90); }
-            else { deleting = true; setTimeout(tick, 2200); }
-          } else {
-            if (ci > 0) { ci--; setTimeout(tick, 40); }
-            else { deleting = false; ri = (ri + 1) % roles.length; setTimeout(tick, 400); }
-          }
-        })();
-      }
-
       // İstanbul saati
+      const clockEl = document.getElementById('clock')!;
       function clock() {
-        var d = new Date();
-        var tr = new Intl.DateTimeFormat('tr-TR', {
+        clockEl.textContent = new Intl.DateTimeFormat('tr-TR', {
           hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul',
-        });
-        document.getElementById('clock').textContent = tr.format(d);
+        }).format(new Date());
       }
-      clock(); setInterval(clock, 30000);
+      clock();
+      setInterval(clock, 30000);
 
-      // scroll reveal
-      var els = document.querySelectorAll('.reveal');
-      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        var io = new IntersectionObserver((entries) => {
-          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-        }, { threshold: 0.12 });
+      // scroll reveal (reduced-motion'da CSS animasyonu kapatır)
+      const els = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.08 });
         els.forEach((el) => io.observe(el));
       } else {
         els.forEach((el) => el.classList.add('in'));
