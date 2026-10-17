@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<Layout
+  title="Projeler — serkan.works"
+  description="Serkan Ağdaş'ın projeleri: kurumsal sistemler, agent ekosistemi, altyapı."
+>
+  <div class="page-head wrap">
+    <a class="back-link" href="/">← Ana sayfa</a>
+    <h1>Projeler</h1>
+    <p class="lede">
+      Kurumsal sistemlerden kişisel altyapıya — her girdi problem, çözüm ve mimariyi anlatan bir
+      case study'ye gider.
+    </p>
+  </div>
+
+  <section class="wrap reveal" style="padding-top: 0;">
+    <div class="projects">
+      {
+        projects.map((p) => (
+          <a class="project" href={`/projects/${p.id}`}>
+            <div>
+              <div class="project-head">
+                <h3>{p.data.title}</h3>
+                {p.data.wip && <span class="badge">devam ediyor</span>}
+              </div>
+              <p class="project-role">{p.data.role}</p>
+            </div>
+            <div>
+              <p class="project-desc">{p.data.description}</p>
+              <p class="project-stack">{p.data.stack.join(' · ')}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('in'));
+  }
+</script>

@@ -1,51 +1,20 @@
 ---
-import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import WorkCard from '../components/WorkCard.astro';
 
-const projects = [
-  {
-    title: 'EDOOR — Eser & Kütüphane Sistemi',
-    role: 'kurumsal · analiz + full-stack',
-    desc: 'Türkiye Yazma Eserler Kurumu Kitap Şifahanesi süreçlerini dijitalleştiren kurumsal sistem. Tersine mühendislik analizi, güvenlik taraması, 37 tablolu veri modeli çözümlemesi ve aktif geliştirme.',
-    stack: ['PHP 8.2', 'PostgreSQL', 'Tailwind', 'jQuery'],
-  },
-  {
-    title: 'Eser Tarama',
-    role: 'Full-stack · mimari + geliştirme',
-    desc: 'Nadir eser dijitalleştirme "fabrika hattı". Çok lokasyonda taranan eserler tek havuzda toplanır, sayfa seviyesinde kabul/red, kanıtlı log, maaş ve cihaz raporları.',
-    stack: ['Laravel 13', 'PostgreSQL', 'Tailwind 4', 'Queue/Job'],
-  },
-  {
-    title: 'PDKS Analiz Platformu',
-    role: 'Full-stack · analiz + pitchdeck',
-    desc: 'Personel takip verisinin zamansal görselleştirmesi ve yatay raporlama ekranları. Yönetici paneli + müşteri sunum uygulaması.',
-    stack: ['Next.js 15', 'React', 'Drizzle', 'PostgreSQL'],
-  },
-  {
-    title: 'e-Door Kurumsal Site',
-    role: 'Frontend',
-    desc: 'Şirket vitrini — statik, hızlı, temiz. Build-time render, sade içerik yönetimi, performans öncelikli.',
-    stack: ['Astro 5', 'Tailwind 3', 'MDX'],
-  },
-  {
-    title: 'Hermes & Agent Orkestrasyonu',
-    role: 'Kişisel proje · 7/7',
-    desc: 'Kendi LLM agent ekosistemim. OpenHands işçileri 7/7 çalışıyor: Linear issue → branch → PR. Ben kokpitten izliyorum.',
-    stack: ['Ollama', 'OpenHands', 'Docker', 'Linear API'],
-  },
-  {
-    title: 'Şirket Sunucusu Mimarisi',
-    role: 'Altyapı · planlama',
-    desc: 'Tek fiziksel sunucu, Proxmox üzerinde 3 VM: DMZ, iç dünya (Tailscale-only) ve agent laboratuvarı. Blast-radius güvenliği.',
-    stack: ['Proxmox', 'Traefik', 'Tailscale', 'Cloudflare'],
-  },
-  {
-    title: 'Halısaha Rezervasyon',
-    role: 'Side project · fikir aşamasında',
-    desc: 'Saha + oyuncu eşleştirme, dinamik takım kurma, rezervasyon akışı. Hafta sonu maç derdine son.',
-    stack: ['Next.js', 'TypeScript', 'Drizzle', 'Netgsm'],
-    wip: true,
-  },
-];
+const allProjects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const featured = allProjects.filter((p) => p.data.featured);
+const rest = allProjects.filter((p) => !p.data.featured);
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const latestNotes = notes.slice(0, 3);
+
+import { photoCollections } from '../photos/collections';
 
 const facts = [
   { k: 'odak', v: 'Full-stack + altyapı' },
@@ -92,263 +61,253 @@ const agentRoles = [
   { title: 'İşçi — OpenHands', desc: 'Sunucuda 7/7 ayakta. Linear issue gelir, branch açar, kod yazar, PR açar. Arayüz sadece izleme için.' },
   { title: 'Kokpit — OpenCode + Zed', desc: 'Kendi makinem. Gündüz feature dallarına kod pushlar, plan notlarını yazar, işçilerin çıktısını denetler.' },
 ];
+
+const dateFormat = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
-<!doctype html>
-<html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Serkan Ağdaş — Yazılım Mühendisi · serkan.works</title>
-    <meta name="description" content="Serkan Ağdaş — yazılım mühendisi. Full-stack ürün, altyapı ve şirket içi yapay zeka otomasyon sistemleri." />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <script is:inline>
-      // tema: flash olmadan sistem tercihi / kalıcı seçim
-      (function () {
-        document.documentElement.classList.add('js');
-        try {
-          var t = localStorage.getItem('theme');
-          if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          document.documentElement.dataset.theme = t;
-        } catch (e) {}
-      })();
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <a class="skip-link" href="#main">İçeriğe geç</a>
+<Layout title="Serkan Ağdaş — Yazılım Mühendisi · serkan.works" navVariant="home">
+  <!-- HERO -->
+  <header class="hero wrap">
+    <p class="status"><span class="dot" aria-hidden="true"></span>Yeni projelere açığım</p>
+    <h1>Serkan Ağdaş</h1>
+    <p class="hero-tagline">Yazılım Mühendisi</p>
+    <p class="hero-sub">
+      Full-stack ürün çıkarır, altyapı kurarım — ve şirkette
+      <b>yapay zeka otomasyon sistemi</b> ile 7/7 çalışan bir agent ekosistemi işletiyorum.
+    </p>
+    <div class="hero-ctas">
+      <a href="#isler" class="btn btn-primary">İşlerime bak</a>
+      <a href="#iletisim" class="link-arrow">İletişime geç <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+  </header>
 
-    <nav class="nav" aria-label="Ana menü">
-      <div class="nav-inner">
-        <a href="#" class="nav-logo">serkan<em>.works</em></a>
-        <div class="nav-links">
-          <a href="#hakkinda">Hakkında</a>
-          <a href="#otomasyon">Otomasyon</a>
-          <a href="#isler">İşler</a>
-          <a href="#stack">Stack</a>
-          <a href="#iletisim">İletişim</a>
-        </div>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Koyu temaya geç">
-          <svg class="icon-light" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="4.2"></circle>
-            <path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"></path>
-          </svg>
-          <svg class="icon-dark" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-          </svg>
-        </button>
-      </div>
-    </nav>
-
-    <main id="main">
-      <!-- HERO -->
-      <header class="hero wrap">
-        <p class="status"><span class="dot" aria-hidden="true"></span>Yeni projelere açığım</p>
-        <h1>Serkan Ağdaş</h1>
-        <p class="hero-tagline">Yazılım Mühendisi</p>
-        <p class="hero-sub">
-          Full-stack ürün çıkarır, altyapı kurarım — ve şirkette
-          <b>yapay zeka otomasyon sistemi</b> ile 7/7 çalışan bir agent ekosistemi işletiyorum.
+  <!-- HAKKINDA -->
+  <section id="hakkinda" class="wrap reveal" aria-labelledby="hakkinda-title">
+    <div class="section-head">
+      <p class="kicker">hakkında</p>
+      <h2 class="section-title" id="hakkinda-title">Sade, hızlı, çalışan sistemler.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          2002 doğumlu, yazılım mühendisliğinden yeni mezun bir mühendisim. Günlük işim
+          <b>PHP, PostgreSQL ve JavaScript</b> ile ürün çıkarmak; arka planda
+          <b>Docker, Proxmox ve Tailscale</b> ile altyapı kurmak.
         </p>
-        <div class="hero-ctas">
-          <a href="#isler" class="btn btn-primary">İşlerime bak</a>
-          <a href="#iletisim" class="link-arrow">İletişime geç <span class="chev" aria-hidden="true">›</span></a>
-        </div>
-      </header>
-
-      <!-- HAKKINDA -->
-      <section id="hakkinda" class="wrap reveal" aria-labelledby="hakkinda-title">
-        <div class="section-head">
-          <p class="kicker">hakkında</p>
-          <h2 class="section-title" id="hakkinda-title">Sade, hızlı, çalışan sistemler.</h2>
-        </div>
-        <div class="about-grid">
-          <div class="about-text">
-            <p>
-              2002 doğumlu, yazılım mühendisliğinden yeni mezun bir mühendisim. Günlük işim
-              <b>PHP, PostgreSQL ve JavaScript</b> ile ürün çıkarmak; arka planda
-              <b>Docker, Proxmox ve Tailscale</b> ile altyapı kurmak.
-            </p>
-            <p>
-              Açık kaynak araçlar, yerel LLM'ler ve self-hosting benim için hobiden çok çalışma
-              biçimi. Kodlamaya kokpitte kendi başlıyorum; tekrarlanan işleri
-              <b>agent'lara devrediyorum</b> — son kararı ve kodu hep insan denetliyor.
-            </p>
-            <div class="stats">
-              {stats.map((s) => (
-                <div class="stat">
-                  <div class="n">{s.n}</div>
-                  <div class="l">{s.l}</div>
-                </div>
-              ))}
+        <p>
+          Açık kaynak araçlar, yerel LLM'ler ve self-hosting benim için hobiden çok çalışma
+          biçimi. Kodlamaya kokpitte kendi başlıyorum; tekrarlanan işleri
+          <b>agent'lara devrediyorum</b> — son kararı ve kodu hep insan denetliyor.
+        </p>
+        <div class="stats">
+          {stats.map((s) => (
+            <div class="stat">
+              <div class="n">{s.n}</div>
+              <div class="l">{s.l}</div>
             </div>
-          </div>
-          <aside aria-label="Künye">
-            <p class="kicker">künye</p>
-            <dl class="facts">
-              {facts.map((f) => (
-                <div class="fact">
-                  <dt>{f.k}</dt>
-                  <dd class={f.ok ? 'ok' : undefined}>{f.v}</dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
-        </div>
-      </section>
-
-      <!-- OTOMASYON -->
-      <section id="otomasyon" class="band" aria-labelledby="otomasyon-title">
-        <div class="wrap reveal">
-          <div class="section-head">
-            <p class="kicker">otomasyon</p>
-            <h2 class="section-title" id="otomasyon-title">Şirkette bir yapay zeka otomasyon sistemi kurdum.</h2>
-            <p class="section-sub">
-              İş takibinden koda kadar uzanan, kendi kurduğum agent hattı. Linear'da açılan bir iş,
-              koordinatör agent tarafından işçiye dağıtılır; işçi branch açar, PR gönderir; insan
-              onayı olmadan hiçbir şey merge olmaz. Tüm hafıza Obsidian vault'ta kalıcı.
-            </p>
-          </div>
-          <ol class="pipeline" aria-label="İş akışı">
-            {pipelineItems.map((p) => ('arrow' in p
-              ? <li class="arrow" aria-hidden="true">→</li>
-              : <li class="step"><span class="step-label">{p.label}</span><span class="step-sub">{p.sub}</span></li>
-            ))}
-          </ol>
-          <div class="roles">
-            {agentRoles.map((r, i) => (
-              <div class="role">
-                <span class="role-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <h4>{r.title}</h4>
-                <p>{r.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- İŞLER -->
-      <section id="isler" class="wrap reveal" aria-labelledby="isler-title">
-        <div class="section-head">
-          <p class="kicker">işler</p>
-          <h2 class="section-title" id="isler-title">Seçili projeler.</h2>
-          <p class="section-sub">Kurumsal sistemlerden kişisel altyapı projelerine — her biri gerçekten çalışan, sürdürülen işler.</p>
-        </div>
-        <div class="projects">
-          {projects.map((p) => (
-            <article class="project">
-              <div>
-                <div class="project-head">
-                  <h3>{p.title}</h3>
-                  {p.wip && <span class="badge">devam ediyor</span>}
-                </div>
-                <p class="project-role">{p.role}</p>
-              </div>
-              <div>
-                <p class="project-desc">{p.desc}</p>
-                <p class="project-stack">{p.stack.join(' · ')}</p>
-              </div>
-            </article>
           ))}
         </div>
-      </section>
-
-      <!-- STACK -->
-      <section id="stack" class="band" aria-labelledby="stack-title">
-        <div class="wrap reveal">
-          <div class="section-head">
-            <p class="kicker">stack</p>
-            <h2 class="section-title" id="stack-title">Ne ile çalışıyorum.</h2>
-            <p class="section-sub">Geniş ama derin — her katmanda üretim tecrübesi olan bir yığın.</p>
-          </div>
-          <div class="stack-grid">
-            {stack.map((g) => (
-              <div class="stack-group">
-                <h3>{g.group}</h3>
-                <ul>{g.items.map((i) => <li>{i}</li>)}</ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- EKRAN KAPALIYKEN -->
-      <section id="ekran-kapaliyken" class="wrap reveal" aria-labelledby="hobi-title">
-        <div class="section-head">
-          <p class="kicker">ekran kapalıyken</p>
-          <h2 class="section-title" id="hobi-title">Müdahaleye açık alanlar.</h2>
-          <p class="section-sub">Kod dışında hayatın devam ettiği yerler — bu düzen ne kadar disiplinliysem kod da o kadar düzenli.</p>
-        </div>
-        <ul class="hobbies">
-          {hobbies.map((h) => (
-            <li>
-              <span class="t">{h.t}</span>
-              <span class="w">{h.w}</span>
-            </li>
+      </div>
+      <aside aria-label="Künye">
+        <p class="kicker">künye</p>
+        <dl class="facts">
+          {facts.map((f) => (
+            <div class="fact">
+              <dt>{f.k}</dt>
+              <dd class={f.ok ? 'ok' : undefined}>{f.v}</dd>
+            </div>
           ))}
-        </ul>
-      </section>
+        </dl>
+      </aside>
+    </div>
+  </section>
 
-      <!-- İLETİŞİM -->
-      <footer id="iletisim" class="footer" aria-labelledby="iletisim-title">
-        <div class="wrap">
-          <h2 id="iletisim-title">Bir sistem kuralım.</h2>
-          <p>Yeni projelere, danışmanlığa ve iyi bir sohbete açığım — en hızlı yol e-posta ya da GitHub.</p>
-          <div class="footer-ctas">
-            <a class="btn btn-primary" href="mailto:merhaba@serkan.works">merhaba@serkan.works</a>
-            <a class="btn btn-ghost" href="https://github.com/serkanagdas" rel="noopener">GitHub ↗</a>
+  <!-- OTOMASYON -->
+  <section id="otomasyon" class="band" aria-labelledby="otomasyon-title">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <p class="kicker">otomasyon</p>
+        <h2 class="section-title" id="otomasyon-title">Şirkette bir yapay zeka otomasyon sistemi kurdum.</h2>
+        <p class="section-sub">
+          İş takibinden koda kadar uzanan, kendi kurduğum agent hattı. Linear'da açılan bir iş,
+          koordinatör agent tarafından işçiye dağıtılır; işçi branch açar, PR gönderir; insan
+          onayı olmadan hiçbir şey merge olmaz. Tüm hafıza Obsidian vault'ta kalıcı.
+        </p>
+      </div>
+      <ol class="pipeline" aria-label="İş akışı">
+        {pipelineItems.map((p) => ('arrow' in p
+          ? <li class="arrow" aria-hidden="true">→</li>
+          : <li class="step"><span class="step-label">{p.label}</span><span class="step-sub">{p.sub}</span></li>
+        ))}
+      </ol>
+      <div class="roles">
+        {agentRoles.map((r, i) => (
+          <div class="role">
+            <span class="role-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h4>{r.title}</h4>
+            <p>{r.desc}</p>
           </div>
-          <div class="footer-meta">
-            <span>© 2026 Serkan Ağdaş — serkan.works</span>
-            <span>Türkiye · <span class="clock" id="clock">--:--</span> (TSİ)</span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- İŞLER: featured case study'ler + tipografik liste -->
+  <section id="isler" class="wrap reveal" aria-labelledby="isler-title">
+    <div class="section-head">
+      <p class="kicker">işler</p>
+      <h2 class="section-title" id="isler-title">Seçili projeler.</h2>
+      <p class="section-sub">Kurumsal sistemlerden kişisel altyapı projelerine — her biri gerçekten çalışan, sürdürülen işler.</p>
+    </div>
+    <div class="work-list">
+      {featured.map((p) => (
+        <WorkCard
+          href={`/projects/${p.id}`}
+          role={p.data.role}
+          title={p.data.title}
+          desc={p.data.description}
+          cover={p.data.cover}
+        />
+      ))}
+    </div>
+    <div class="projects">
+      {rest.map((p) => (
+        <a class="project" href={`/projects/${p.id}`}>
+          <div>
+            <div class="project-head">
+              <h3>{p.data.title}</h3>
+              {p.data.wip && <span class="badge">devam ediyor</span>}
+            </div>
+            <p class="project-role">{p.data.role}</p>
           </div>
+          <div>
+            <p class="project-desc">{p.data.description}</p>
+            <p class="project-stack">{p.data.stack.join(' · ')}</p>
+          </div>
+        </a>
+      ))}
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <h3>Halısaha Rezervasyon</h3>
+            <span class="badge">fikir aşamasında</span>
+          </div>
+          <p class="project-role">Side project</p>
         </div>
-      </footer>
-    </main>
+        <div>
+          <p class="project-desc">Saha + oyuncu eşleştirme, dinamik takım kurma, rezervasyon akışı. Hafta sonu maç derdine son.</p>
+          <p class="project-stack">Next.js · TypeScript · Drizzle · Netgsm</p>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top: 26px;">
+      <a class="link-arrow" href="/projects">Tüm projeler <span class="chev" aria-hidden="true">›</span></a>
+    </p>
+  </section>
 
-    <script>
-      // tema toggle (flash'sız başlangıç head'deki inline script'te)
-      const root = document.documentElement;
-      const toggle = document.getElementById('theme-toggle')!;
+  <!-- FOTOĞRAFLAR -->
+  <section id="fotolar" class="band" aria-labelledby="fotolar-title">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <p class="kicker">fotoğraflar</p>
+        <h2 class="section-title" id="fotolar-title">Ekran dışındaki kareler.</h2>
+        <p class="section-sub">Bisiklet turları, saat kadranları, sunucu odası ve doğa — hobilerin foto hali.</p>
+      </div>
+      <div class="coll-list">
+        {photoCollections.map((c) => (
+          <a class="coll-row" href={`/photos/${c.id}`}>
+            <div class="coll-thumb">
+              {c.cover ? <img src={c.cover} alt="" loading="lazy" /> : <div class="cover-ph" style="aspect-ratio: 4/3; font-size: 20px;">{c.title.slice(0, 2)}</div>}
+            </div>
+            <div class="coll-main">
+              <h2>{c.title}</h2>
+              <p>{c.description}</p>
+            </div>
+            <span class="coll-count">{c.photos.length} fotoğraf</span>
+          </a>
+        ))}
+      </div>
+      <p style="margin-top: 26px;">
+        <a class="link-arrow" href="/photos">Tüm fotoğraf koleksiyonları <span class="chev" aria-hidden="true">›</span></a>
+      </p>
+    </div>
+  </section>
 
-      function syncThemeLabel() {
-        toggle.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç');
-      }
-      syncThemeLabel();
+  <!-- NOTLAR -->
+  <section id="notlar" class="wrap reveal" aria-labelledby="notlar-title">
+    <div class="section-head">
+      <p class="kicker">notlar</p>
+      <h2 class="section-title" id="notlar-title">Yaptıkça yazdıklarım.</h2>
+      <p class="section-sub">Kurulum notları, mimari kararlar ve öğrendiklerim — fotoğraflı kısa yazılar.</p>
+    </div>
+    <div class="note-list">
+      {latestNotes.map((n) => (
+        <a class="note-row" href={`/notes/${n.id}`}>
+          <div class="note-thumb">
+            {n.data.cover ? <img src={n.data.cover} alt="" loading="lazy" /> : <div class="cover-ph" style="aspect-ratio: 4/3; font-size: 20px;">✎</div>}
+          </div>
+          <div class="note-main">
+            <time datetime={n.data.pubDate.toISOString().slice(0, 10)}>{dateFormat.format(n.data.pubDate)}</time>
+            <h2>{n.data.title}</h2>
+            <p class="desc">{n.data.description}</p>
+            <p class="tags">{n.data.tags.join(' · ')}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <p style="margin-top: 26px;">
+      <a class="link-arrow" href="/notes">Tüm notlar <span class="chev" aria-hidden="true">›</span></a>
+    </p>
+  </section>
 
-      toggle.addEventListener('click', () => {
-        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-        root.dataset.theme = next;
-        try { localStorage.setItem('theme', next); } catch (e) {}
-        syncThemeLabel();
+  <!-- STACK -->
+  <section id="stack" class="band" aria-labelledby="stack-title">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <p class="kicker">stack</p>
+        <h2 class="section-title" id="stack-title">Ne ile çalışıyorum.</h2>
+        <p class="section-sub">Geniş ama derin — her katmanda üretim tecrübesi olan bir yığın.</p>
+      </div>
+      <div class="stack-grid">
+        {stack.map((g) => (
+          <div class="stack-group">
+            <h3>{g.group}</h3>
+            <ul>{g.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- EKRAN KAPALIYKEN -->
+  <section id="ekran-kapaliyken" class="wrap reveal" aria-labelledby="hobi-title">
+    <div class="section-head">
+      <p class="kicker">ekran kapalıyken</p>
+      <h2 class="section-title" id="hobi-title">Müdahaleye açık alanlar.</h2>
+      <p class="section-sub">Kod dışında hayatın devam ettiği yerler — bu düzen ne kadar disiplinliysem kod da o kadar düzenli.</p>
+    </div>
+    <ul class="hobbies">
+      {hobbies.map((h) => (
+        <li>
+          <span class="t">{h.t}</span>
+          <span class="w">{h.w}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>
+
+<script>
+  // scroll reveal (reduced-motion'da CSS animasyonu kapatır)
+  const els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
       });
-
-      // İstanbul saati
-      const clockEl = document.getElementById('clock')!;
-      function clock() {
-        clockEl.textContent = new Intl.DateTimeFormat('tr-TR', {
-          hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul',
-        }).format(new Date());
-      }
-      clock();
-      setInterval(clock, 30000);
-
-      // scroll reveal (reduced-motion'da CSS animasyonu kapatır)
-      const els = document.querySelectorAll('.reveal');
-      if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-          });
-        }, { threshold: 0.08 });
-        els.forEach((el) => io.observe(el));
-      } else {
-        els.forEach((el) => el.classList.add('in'));
-      }
-    </script>
-  </body>
-</html>
+    }, { threshold: 0.08 });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('in'));
+  }
+</script>

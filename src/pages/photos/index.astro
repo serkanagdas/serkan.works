@@ -1,0 +1,47 @@
+---
+import { photoCollections } from '../../photos/collections';
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Fotoğraflar — serkan.works"
+  description="Bisiklet, saatler, sunucu odası ve doğa — ekran dışındaki kareler."
+  navCurrent="photos"
+>
+  <div class="page-head wrap">
+    <a class="back-link" href="/">← Ana sayfa</a>
+    <h1>Fotoğraflar</h1>
+    <p class="lede">Ekrandan uzak günlerin kaydı — bisiklet turları, saat kadranları, sunucu odası ve doğa.</p>
+  </div>
+
+  <section class="wrap reveal" style="padding-top: 0;">
+    <div class="coll-list">
+      {photoCollections.map((c) => (
+        <a class="coll-row" href={`/photos/${c.id}`}>
+          <div class="coll-thumb">
+            {c.cover ? <img src={c.cover} alt="" loading="lazy" /> : <div class="cover-ph" style="aspect-ratio: 4/3; font-size: 20px;">{c.title.slice(0, 2)}</div>}
+          </div>
+          <div class="coll-main">
+            <h2>{c.title}</h2>
+            <p>{c.description}</p>
+          </div>
+          <span class="coll-count">{c.photos.length} fotoğraf</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('in'));
+  }
+</script>

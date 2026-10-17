@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<Layout
+  title={`${project.data.title} — serkan.works`}
+  description={project.data.description}
+>
+  <article class="wrap">
+    <div class="page-head">
+      <a class="back-link" href="/projects">← Tüm projeler</a>
+      <h1>{project.data.title}</h1>
+      <p class="lede">{project.data.description}</p>
+    </div>
+
+    <div class="cover-frame">
+      {
+        project.data.cover ? (
+          <img src={project.data.cover} alt="" />
+        ) : (
+          <div class="cover-ph">{project.data.title.slice(0, 2)}</div>
+        )
+      }
+    </div>
+
+    <div class="case-meta">
+      <div><span class="k">rol</span><span class="v">{project.data.role}</span></div>
+      <div><span class="k">yıl</span><span class="v">{project.data.year}</span></div>
+      <div><span class="k">stack</span><span class="v">{project.data.stack.join(' · ')}</span></div>
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {
+      project.data.links && (
+        <div class="case-links">
+          {project.data.links.github && (
+            <a class="btn btn-primary" href={project.data.links.github} rel="noopener">
+              GitHub ↗
+            </a>
+          )}
+          {project.data.links.live && (
+            <a class="btn btn-ghost" href={project.data.links.live} rel="noopener">
+              Canlı ↗
+            </a>
+          )}
+        </div>
+      )
+    }
+  </article>
+</Layout>

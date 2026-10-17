@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const dateFormat = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Layout
+  title="Notlar — serkan.works"
+  description="Kurulum notları, mimari kararlar ve öğrendiklerim — fotoğraflı kısa yazılar."
+  navCurrent="notes"
+>
+  <div class="page-head wrap">
+    <a class="back-link" href="/">← Ana sayfa</a>
+    <h1>Notlar</h1>
+    <p class="lede">Yaptıkça yazdıklarım: kurulum notları, mimari kararlar, hatalar ve dersler.</p>
+  </div>
+
+  <section class="wrap reveal" style="padding-top: 0;">
+    {
+      notes.length === 0 ? (
+        <div class="empty">
+          <b>Henüz not yok</b>
+          Yeni not: <code>src/content/notes/</code> altına bir <code>.md</code> dosyası at —
+          title, description, pubDate yeterli.
+        </div>
+      ) : (
+        <div class="note-list">
+          {notes.map((n) => (
+            <a class="note-row" href={`/notes/${n.id}`}>
+              <div class="note-thumb">
+                {n.data.cover ? <img src={n.data.cover} alt="" loading="lazy" /> : <div class="cover-ph" style="aspect-ratio: 4/3; font-size: 20px;">✎</div>}
+              </div>
+              <div class="note-main">
+                <time datetime={n.data.pubDate.toISOString().slice(0, 10)}>{dateFormat.format(n.data.pubDate)}</time>
+                <h2>{n.data.title}</h2>
+                <p class="desc">{n.data.description}</p>
+                <p class="tags">{n.data.tags.join(' · ')}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('in'));
+  }
+</script>
