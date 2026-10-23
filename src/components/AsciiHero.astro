@@ -1,0 +1,414 @@
+---
+// Two layers of text: a slow ASCII sea on top, a circuit board underneath.
+// The glass lens shows what is under the surface wherever you put it.
+---
+
+<div class="hero-field" aria-hidden="true">
+  <pre class="layer sea"></pre>
+  <pre class="layer board"></pre>
+  <div class="lens"></div>
+  <svg class="defs" width="0" height="0">
+    <filter id="lens-refract" filterUnits="userSpaceOnUse" x="0" y="0" width="172" height="172" color-interpolation-filters="sRGB">
+      <feImage id="lens-map" x="0" y="0" width="172" height="172" preserveAspectRatio="none" result="map"></feImage>
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="64" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+    </filter>
+  </svg>
+</div>
+<p class="hero-hint mono" aria-hidden="true">
+  <span class="pointer-only">move the glass ·</span> software on the surface, hardware underneath
+</p>
+
+<style>
+  .hero-field {
+    --lens: 172px;
+    --lx: 50%;
+    --ly: 50%;
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+    touch-action: pan-y;
+    -webkit-mask-image: radial-gradient(130% 100% at 50% 50%, #000 55%, transparent 100%);
+    mask-image: radial-gradient(130% 100% at 50% 50%, #000 55%, transparent 100%);
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    font-family: ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;
+    font-size: 13px;
+    line-height: 16px;
+    white-space: pre;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .sea {
+    color: var(--ascii);
+  }
+
+  .board {
+    color: var(--ascii-strong);
+    background: var(--bg);
+    clip-path: circle(calc(var(--lens) / 2 - 1px) at var(--lx) var(--ly));
+  }
+
+  .lens {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--lens);
+    height: var(--lens);
+    border-radius: 50%;
+    transform: translate(calc(var(--lx) - 50%), calc(var(--ly) - 50%));
+    translate: none;
+    pointer-events: none;
+    background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.22), transparent 42%);
+    -webkit-backdrop-filter: saturate(1.6) brightness(1.04);
+    backdrop-filter: saturate(1.6) brightness(1.04);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 3px color-mix(in srgb, var(--blue) 30%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--glass-edge) 60%, transparent),
+      inset 0 0 18px color-mix(in srgb, var(--blue) 14%, transparent),
+      0 12px 30px -10px rgba(10, 60, 160, 0.35);
+  }
+
+  :global(html.refract) .lens {
+    -webkit-backdrop-filter: url(#lens-refract) saturate(1.6) brightness(1.04);
+    backdrop-filter: url(#lens-refract) saturate(1.6) brightness(1.04);
+  }
+
+  .lens::after {
+    /* caustic: the bright crescent light makes on the far side of a drop of water */
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 70% 82%, rgba(255, 255, 255, 0.35), transparent 30%);
+    mix-blend-mode: soft-light;
+  }
+
+  .defs {
+    position: absolute;
+  }
+
+  .hero-hint {
+    margin: 4px 0 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  @media (hover: none) {
+    .pointer-only {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-field {
+      --lens: 132px;
+      height: 230px;
+    }
+    .layer {
+      font-size: 11px;
+      line-height: 13px;
+    }
+  }
+</style>
+
+<script>
+  const field = document.querySelector<HTMLElement>('.hero-field')!;
+  const sea = field.querySelector<HTMLPreElement>('.sea')!;
+  const board = field.querySelector<HTMLPreElement>('.board')!;
+  const lensEl = field.querySelector<HTMLElement>('.lens')!;
+  const mapEl = document.getElementById('lens-map')!;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let cols = 0, rows = 0, cw = 8, lh = 16;
+  let grid: number[] = []; // circuit connectivity bits: 1 up, 2 right, 4 down, 8 left
+  let label: (string | null)[] = []; // silkscreen + chip glyphs
+  let traces: number[][] = []; // cell indices along each trace, for current pulses
+
+  // ── measure the monospace cell ──
+  function measure() {
+    const probe = document.createElement('span');
+    probe.textContent = 'M'.repeat(100);
+    sea.append(probe);
+    const r = probe.getBoundingClientRect();
+    cw = r.width / 100;
+    sea.removeChild(probe);
+    lh = parseFloat(getComputedStyle(sea).lineHeight);
+    cols = Math.ceil(field.clientWidth / cw);
+    rows = Math.ceil(field.clientHeight / lh);
+  }
+
+  // ── seeded randomness so the board is the same on every visit ──
+  let seed = 2002;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  const ri = (a: number, b: number) => a + Math.floor(rnd() * (b - a + 1));
+
+  const BOX: Record<number, string> = {
+    0: ' ', 1: '╵', 2: '╶', 4: '╷', 8: '╴',
+    10: '─', 5: '│', 6: '┌', 12: '┐', 3: '└', 9: '┘',
+    7: '├', 13: '┤', 14: '┬', 11: '┴', 15: '┼',
+  };
+  const HEAVY: Record<string, string> = {
+    '─': '━', '│': '┃', '┌': '┏', '┐': '┓', '└': '┗', '┘': '┛',
+    '├': '┣', '┤': '┫', '┬': '┳', '┴': '┻', '┼': '╋', '╴': '╸', '╶': '╺', '╵': '╹', '╷': '╻',
+  };
+  const DIRS = [[0, -1, 1, 4], [1, 0, 2, 8], [0, 1, 4, 1], [-1, 0, 8, 2]] as const; // dx, dy, bit, opposite
+
+  function buildBoard() {
+    seed = 2002;
+    const n = cols * rows;
+    grid = new Array(n).fill(0);
+    label = new Array(n).fill(null);
+    traces = [];
+    const used = new Uint8Array(n);
+    const at = (x: number, y: number) => y * cols + x;
+    const inside = (x: number, y: number) => x >= 1 && y >= 1 && x < cols - 1 && y < rows - 1;
+
+    const put = (x: number, y: number, s: string) => {
+      for (let i = 0; i < s.length; i++) if (inside(x + i, y)) { label[at(x + i, y)] = s[i]; used[at(x + i, y)] = 1; }
+    };
+
+    // chips
+    const pins: [number, number, number][] = [];
+    const chipCount = Math.max(3, Math.round((cols * rows) / 380));
+    for (let c = 0; c < chipCount; c++) {
+      const w = ri(7, 12), h = ri(3, 4);
+      const x0 = ri(3, Math.max(3, cols - w - 4)), y0 = ri(2, Math.max(2, rows - h - 3));
+      let clash = false;
+      for (let y = y0 - 2; y < y0 + h + 2 && !clash; y++)
+        for (let x = x0 - 2; x < x0 + w + 2; x++) if (inside(x, y) && used[at(x, y)]) { clash = true; break; }
+      if (clash) continue;
+      for (let y = y0; y < y0 + h; y++) {
+        let s = '';
+        for (let x = 0; x < w; x++) {
+          const top = y === y0, bot = y === y0 + h - 1, l = x === 0, r = x === w - 1;
+          s += top ? (l ? '╔' : r ? '╗' : '═') : bot ? (l ? '╚' : r ? '╝' : '═') : l || r ? '║' : ' ';
+        }
+        put(x0, y, s);
+      }
+      put(x0 + 2, y0 + 1, `U${c + 1}`);
+      for (let x = x0 + 1; x < x0 + w - 1; x += 2) {
+        pins.push([x, y0 - 1, 0], [x, y0 + h, 2]);
+      }
+      for (let y = y0 + 1; y < y0 + h - 1; y++) pins.push([x0 - 1, y, 3], [x0 + w, y, 1]);
+    }
+
+    // a few silkscreen marks
+    const marks = ['R7', 'C12', 'GND', '3V3', 'SA rev.3', 'Q2', 'TP1', 'İST'];
+    for (const m of marks) {
+      const x = ri(2, Math.max(2, cols - m.length - 2)), y = ri(1, rows - 2);
+      let free = true;
+      for (let i = -1; i <= m.length; i++) if (inside(x + i, y) && used[at(x + i, y)]) free = false;
+      if (free) put(x, y, m);
+    }
+
+    // traces: walk from chip pins (and a few loose vias) with right-angle turns
+    const starts = pins.filter(() => rnd() < 0.85);
+    const loose = Math.round((cols * rows) / 45);
+    for (let i = 0; i < loose; i++) starts.push([ri(2, cols - 3), ri(2, rows - 3), ri(0, 3)]);
+
+    for (const [sx, sy, sd] of starts) {
+      if (!inside(sx, sy) || used[at(sx, sy)]) continue;
+      let x = sx, y = sy, d = sd;
+      const path = [at(x, y)];
+      used[at(x, y)] = 2;
+      const len = ri(10, 48);
+      for (let step = 0; step < len; step++) {
+        if (rnd() < 0.12) d = (d + (rnd() < 0.5 ? 1 : 3)) % 4;
+        const [dx, dy, bit, opp] = DIRS[d];
+        const nx = x + dx, ny = y + dy;
+        if (!inside(nx, ny) || used[at(nx, ny)] === 1) break;
+        grid[at(x, y)] |= bit;
+        grid[at(nx, ny)] |= opp;
+        const joined = used[at(nx, ny)] === 2;
+        x = nx; y = ny;
+        path.push(at(x, y));
+        used[at(x, y)] = 2;
+        if (joined) break;
+      }
+      if (path.length > 3) traces.push(path);
+      else path.forEach((i) => { if (!grid[i]) used[i] = 0; });
+      // pads at the loose ends
+      const end = at(x, y);
+      if ([1, 2, 4, 8].includes(grid[end])) label[end] = rnd() < 0.5 ? '●' : '○';
+    }
+  }
+
+  // ── pulses of current running along traces ──
+  type Pulse = { t: number; at: number; speed: number };
+  let pulses: Pulse[] = [];
+
+  function drawBoard() {
+    const lit = new Set<number>();
+    for (const p of pulses) {
+      const path = traces[p.t];
+      for (let k = 0; k < 4; k++) {
+        const i = Math.floor(p.at) - k;
+        if (i >= 0 && i < path.length) lit.add(path[i]);
+      }
+    }
+    let out = '';
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const i = y * cols + x;
+        const l = label[i];
+        if (l) { out += l; continue; }
+        const c = BOX[grid[i]] ?? ' ';
+        out += lit.has(i) ? HEAVY[c] ?? c : c === ' ' && (x * 7 + y * 13) % 29 === 0 ? '·' : c;
+      }
+      out += '\n';
+    }
+    board.textContent = out;
+  }
+
+  // ── the sea ──
+  const RAMP = '  ..-~~=+*';
+  let lx = 0, ly = 0, tx = 0, ty = 0; // lens position (px), eased toward target
+  let lastPointer = -1e9;
+
+  function drawSea(t: number) {
+    const s = t / 1000;
+    const lcx = lx / cw, lcy = ly / lh;
+    let out = '';
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        // a few swells crossing at different angles; only the crests catch the light
+        let h =
+          Math.sin(x * 0.07 + y * 0.21 + s * 0.7) +
+          0.8 * Math.sin(x * 0.045 - y * 0.33 - s * 0.5 + Math.sin(x * 0.02 + s * 0.2) * 2) +
+          0.6 * Math.sin(x * 0.13 + Math.sin(y * 0.5 + s * 0.4) * 1.3 + s * 0.9) +
+          0.35 * Math.sin((x - y * 1.7) * 0.21 - s * 1.3);
+        let v = (h + 2.75) / 5.5;
+        // ripples spreading from the glass
+        const d = Math.hypot(x - lcx, (y - lcy) * (lh / cw));
+        v += 0.28 * Math.sin(d * 0.55 - s * 3.2) * Math.exp(-d / 12);
+        v = Math.pow(Math.max(0, v), 1.7) * 1.25;
+        const k = Math.max(0, Math.min(RAMP.length - 1, Math.floor(v * RAMP.length)));
+        out += RAMP[k];
+      }
+      out += '\n';
+    }
+    sea.textContent = out;
+  }
+
+  // ── displacement map for the lens: magnify the centre, bend hard at the rim ──
+  function buildLensMap() {
+    const size = 128;
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const g = c.getContext('2d')!;
+    const img = g.createImageData(size, size);
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const nx = (x + 0.5) / size * 2 - 1;
+        const ny = (y + 0.5) / size * 2 - 1;
+        const r = Math.min(1, Math.hypot(nx, ny));
+        const k = 0.55 + 0.45 * Math.pow(r, 3);
+        const i = (y * size + x) * 4;
+        img.data[i] = 128 - nx * k * 127;
+        img.data[i + 1] = 128 - ny * k * 127;
+        img.data[i + 2] = 128;
+        img.data[i + 3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+    mapEl.setAttribute('href', c.toDataURL());
+  }
+
+  // Backdrop filters work in the element's own pixel space, so size the map to the lens.
+  function sizeFilter() {
+    const S = lensEl.offsetWidth;
+    const f = document.getElementById('lens-refract')!;
+    for (const el of [f, mapEl]) {
+      el.setAttribute('width', String(S));
+      el.setAttribute('height', String(S));
+    }
+    f.querySelector('feDisplacementMap')!.setAttribute('scale', String(Math.round(S * 0.38)));
+  }
+
+  function setLens() {
+    field.style.setProperty('--lx', `${lx}px`);
+    field.style.setProperty('--ly', `${ly}px`);
+  }
+
+  function idleTarget(t: number) {
+    const s = t / 1000;
+    const w = field.clientWidth, h = field.clientHeight;
+    tx = w / 2 + Math.sin(s * 0.23) * w * 0.32;
+    ty = h / 2 + Math.sin(s * 0.37 + 1) * h * 0.22;
+  }
+
+  let visible = true;
+  let last = 0;
+  function frame(t: number) {
+    if (!visible) return;
+    if (t - last > 1000 / 30) {
+      last = t;
+      if (t - lastPointer > 2600) idleTarget(t);
+      lx += (tx - lx) * 0.14;
+      ly += (ty - ly) * 0.14;
+      setLens();
+      drawSea(t);
+      // advance current
+      if (traces.length && pulses.length < 7 && Math.random() < 0.12) {
+        pulses.push({ t: (Math.random() * traces.length) | 0, at: 0, speed: 0.5 + Math.random() * 0.6 });
+      }
+      pulses = pulses.filter((p) => (p.at += p.speed) < traces[p.t].length + 4);
+      drawBoard();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function init() {
+    measure();
+    sizeFilter();
+    buildBoard();
+    pulses = [];
+    if (!lx) {
+      lx = tx = field.clientWidth * 0.62;
+      ly = ty = field.clientHeight * 0.5;
+    }
+    setLens();
+    drawSea(0);
+    drawBoard();
+  }
+
+  field.addEventListener('pointermove', (e) => {
+    const r = field.getBoundingClientRect();
+    tx = e.clientX - r.left;
+    ty = e.clientY - r.top;
+    lastPointer = performance.now();
+  });
+  field.addEventListener('pointerdown', (e) => {
+    const r = field.getBoundingClientRect();
+    tx = e.clientX - r.left;
+    ty = e.clientY - r.top;
+    lastPointer = performance.now();
+  });
+
+  buildLensMap();
+  init();
+  document.fonts?.ready.then(init);
+  let rt = 0;
+  addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = window.setTimeout(init, 150);
+  });
+
+  if (reduce) {
+    // one still frame: board visible through the glass, nothing moves
+  } else {
+    new IntersectionObserver(([e]) => {
+      const was = visible;
+      visible = e.isIntersecting;
+      if (visible && !was) requestAnimationFrame(frame);
+    }).observe(field);
+    requestAnimationFrame(frame);
+  }
+</script>

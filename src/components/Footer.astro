@@ -1,0 +1,190 @@
+---
+import { wordmark } from '../lib/wordmark';
+import { site } from '../data/site';
+
+const wide = wordmark('serkan.works');
+const narrow = `${wordmark('serkan')}\n\n${wordmark('.works')}`;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wide">
+    <div class="mark-box" aria-hidden="true">
+      <pre class="mark" data-wide={wide} data-narrow={narrow}>{wide}</pre>
+    </div>
+    <pre class="tide" aria-hidden="true"></pre>
+    <div class="colophon">
+      <span>© {year} {site.name}</span>
+      <span>{site.location} <time class="clock" data-tz={site.timezone}>--:--</time></span>
+      <span>built by hand with Astro · no trackers</span>
+      <span><a href="/llms.txt">llms.txt</a> · <a href="/humans.txt">humans.txt</a></span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 120px;
+    padding-bottom: 40px;
+    overflow: hidden;
+  }
+
+  .mark-box {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .mark,
+  .tide {
+    margin: 0;
+    font-family: ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;
+    line-height: 1;
+    white-space: pre;
+    color: var(--ascii-strong);
+    user-select: none;
+  }
+
+  .mark {
+    font-size: 9px;
+    cursor: crosshair;
+    width: max-content;
+  }
+
+  .tide {
+    margin-top: 18px;
+    font-size: 13px;
+    line-height: 1.1;
+    color: var(--ascii);
+    opacity: 0.8;
+    overflow: hidden;
+  }
+
+  .colophon {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font: 400 12.5px/1.5 var(--mono);
+    color: var(--ink-3);
+  }
+
+  .colophon a {
+    color: var(--ink-2);
+  }
+</style>
+
+<script>
+  const SHADE = ['░', '▒', '▓'];
+  const NOISE = '/\\|-_=+<>*#';
+  const box = document.querySelector<HTMLElement>('.mark-box')!;
+  const pre = document.querySelector<HTMLPreElement>('.mark')!;
+  const tide = document.querySelector<HTMLPreElement>('.tide')!;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let rows: string[] = [];
+  let heat: number[][] = [];
+  let cols = 0;
+  let charW = 0;
+  let lineH = 0;
+  let raf = 0;
+
+  // Pick the wide or stacked wordmark, then size it so it exactly fills the column.
+  function layout() {
+    const narrow = box.clientWidth < 560;
+    const src = (narrow ? pre.dataset.narrow : pre.dataset.wide) ?? '';
+    rows = src.split('\n');
+    cols = Math.max(...rows.map((r) => r.length));
+    rows = rows.map((r) => r.padEnd(cols, ' '));
+    heat = rows.map(() => new Array(cols).fill(0));
+    pre.textContent = rows.join('\n');
+    pre.style.fontSize = '20px';
+    const fs = Math.min(22, (20 * box.clientWidth) / pre.getBoundingClientRect().width);
+    pre.style.fontSize = `${fs}px`;
+    const r = pre.getBoundingClientRect();
+    charW = r.width / cols;
+    lineH = r.height / rows.length;
+    drawTide(0);
+  }
+
+  function render() {
+    let alive = false;
+    const out = rows.map((row, y) => {
+      let s = '';
+      for (let x = 0; x < cols; x++) {
+        const h = heat[y][x];
+        const c = row[x];
+        if (h > 0.02) {
+          alive = true;
+          heat[y][x] = h * 0.9;
+          if (c === ' ') s += h > 0.55 && Math.random() < 0.12 ? '·' : ' ';
+          else if (c === '█') s += SHADE[Math.min(2, Math.floor((1 - h) * 3))];
+          else s += h > 0.5 ? NOISE[(Math.random() * NOISE.length) | 0] : c;
+        } else {
+          heat[y][x] = 0;
+          s += c;
+        }
+      }
+      return s;
+    });
+    pre.textContent = out.join('\n');
+    raf = alive ? requestAnimationFrame(render) : 0;
+  }
+
+  pre.addEventListener('pointermove', (e) => {
+    if (reduce) return;
+    const r = pre.getBoundingClientRect();
+    const cx = (e.clientX - r.left) / charW;
+    const cy = (e.clientY - r.top) / lineH;
+    const R = 7;
+    for (let y = Math.max(0, Math.floor(cy - R / 2)); y < Math.min(rows.length, cy + R / 2); y++) {
+      for (let x = Math.max(0, Math.floor(cx - R)); x < Math.min(cols, cx + R); x++) {
+        // chars are ~2x taller than wide, so squash the distance vertically
+        const d = Math.hypot((x - cx) / R, ((y - cy) * 2) / R);
+        if (d < 1) heat[y][x] = Math.max(heat[y][x], 1 - d);
+      }
+    }
+    if (!raf) raf = requestAnimationFrame(render);
+  });
+
+  // A slow line of water under the wordmark.
+  function drawTide(t: number) {
+    const n = Math.ceil(box.clientWidth / 7.8) + 2;
+    const ramp = ' .-~~^';
+    let s = '';
+    for (let x = 0; x < n; x++) {
+      const v = 0.5 + 0.3 * Math.sin(x * 0.18 + t * 0.0012) + 0.2 * Math.sin(x * 0.051 - t * 0.0007);
+      s += ramp[Math.max(0, Math.min(ramp.length - 1, Math.floor(v * ramp.length)))];
+    }
+    tide.textContent = s;
+  }
+
+  let tideOn = false;
+  function tideLoop(t: number) {
+    drawTide(t);
+    if (tideOn) setTimeout(() => requestAnimationFrame(tideLoop), 80);
+  }
+  if (!reduce) {
+    new IntersectionObserver(([e]) => {
+      const was = tideOn;
+      tideOn = e.isIntersecting;
+      if (tideOn && !was) requestAnimationFrame(tideLoop);
+    }).observe(tide);
+  }
+
+  // İstanbul clock
+  const clock = document.querySelector<HTMLTimeElement>('.clock');
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: clock.dataset.tz });
+    const tick = () => (clock.textContent = fmt.format(new Date()));
+    tick();
+    setInterval(tick, 20_000);
+  }
+
+  layout();
+  document.fonts?.ready.then(layout);
+  let rt = 0;
+  addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = window.setTimeout(layout, 120);
+  });
+</script>

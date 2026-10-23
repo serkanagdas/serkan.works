@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site, links } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  page?: 'home' | 'pictures' | 'other';
+}
+
+const { title, description = site.description, page = 'other' } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  jobTitle: site.role,
+  worksFor: { '@type': 'Organization', name: 'E Dijital Bilişim Hizmetleri', url: 'https://edoor.com.tr' },
+  homeLocation: { '@type': 'Place', name: 'İstanbul, Türkiye' },
+  knowsAbout: ['Applied AI', 'Agentic systems', 'Full-stack development', 'PostgreSQL', 'Self-hosting'],
+  sameAs: links.filter((l) => l.href.startsWith('https')).map((l) => l.href),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f3f5f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#05090f" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.domain} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', site.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Plain-text summary for language models" />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <script is:inline>
+      // Real refraction only where backdrop-filter accepts SVG filters (Chromium).
+      if (navigator.userAgentData?.brands?.some((b) => /Chromium/.test(b.brand))) {
+        document.documentElement.classList.add('refract');
+      }
+    </script>
+  </head>
+  <body data-page={page}>
+    <Nav page={page} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
