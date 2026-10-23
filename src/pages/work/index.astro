@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import { work } from '../../data/site';
+const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+---
+
+<Base title="Work">
+  <main class="col">
+    <p class="eyebrow">Work</p>
+    <h1 class="title">Things I’ve built,<br />and some I’m building.</h1>
+    <ol class="toc">
+      {
+        work.map((w, i) => (
+          <li>
+            <a href={`/work/${w.slug}`}>
+              <span class="num">{numerals[i]}</span>
+              <span class="t">{w.title}</span>
+              <span class="dots" aria-hidden="true" />
+              <span class="yr">{w.year}</span>
+              <span class="l">{w.line}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</Base>
+
+<style>
+  .toc {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+  }
+  .toc a {
+    display: grid;
+    grid-template-columns: 44px auto 1fr auto;
+    grid-template-areas: 'num t dots yr' '. l l l';
+    align-items: baseline;
+    column-gap: 10px;
+    padding: 16px 0;
+    text-decoration: none;
+  }
+  .num {
+    grid-area: num;
+    font-size: 15px;
+    color: var(--green);
+    font-variant-numeric: oldstyle-nums;
+  }
+  .t {
+    grid-area: t;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+  .dots {
+    grid-area: dots;
+    border-bottom: 1.5px dotted var(--ink-faint);
+    transform: translateY(-6px);
+    opacity: 0.6;
+  }
+  .yr {
+    grid-area: yr;
+    font-style: italic;
+    color: var(--ink-faint);
+  }
+  .l {
+    grid-area: l;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .toc a:hover .t {
+    color: var(--blue);
+  }
+  .toc a:hover .dots {
+    border-color: var(--blue);
+  }
+</style>

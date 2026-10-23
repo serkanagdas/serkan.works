@@ -1,16 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3d8bff"/>
-      <stop offset="1" stop-color="#0a5ae6"/>
-    </linearGradient>
-    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
-      <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="16" fill="url(#g)"/>
-  <rect x="1.5" y="1.5" width="61" height="61" rx="14.5" fill="url(#s)" stroke="#fff" stroke-opacity=".35"/>
-  <text x="15" y="43" font-family="Menlo, Consolas, monospace" font-size="30" font-weight="700" fill="#fff">s</text>
-  <rect x="38" y="20" width="9" height="24" rx="1.5" fill="#fff"/>
+  <defs><clipPath id="c"><circle cx="32" cy="32" r="30"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <rect width="64" height="64" fill="#dbe9f6"/>
+    <rect y="30" width="64" height="8" fill="#9cc0e2"/>
+    <path d="M0 40 Q16 30 32 36 T64 33 V64 H0Z" fill="#8bbf9e"/>
+    <path d="M0 50 Q20 42 40 48 T64 46 V64 H0Z" fill="#3f7f5c"/>
+  </g>
 </svg>

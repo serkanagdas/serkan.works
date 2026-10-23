@@ -1,0 +1,145 @@
+---
+// A painted landscape: sky, a strip of sea, three rows of hills and a road with a cyclist on it.
+// Everything is drawn at build time from a few sine waves, so it is the same on every visit.
+interface Props {
+  variant?: 'full' | 'band';
+  rider?: boolean;
+}
+const { variant = 'full', rider = true } = Astro.props;
+
+const W = 1600;
+const H = 1000;
+
+function ridge(base: number, waves: [number, number, number][], step = 20) {
+  let d = `M-120 ${H + 120} L-120 ${base}`;
+  for (let x = -120; x <= W + 120; x += step) {
+    const y = base + waves.reduce((s, [a, f, p]) => s + a * Math.sin(x * f + p), 0);
+    d += ` L${x} ${y.toFixed(1)}`;
+  }
+  return d + ` L${W + 120} ${H + 120} Z`;
+}
+
+const far = ridge(585, [[26, 0.0031, 0.4], [12, 0.0083, 2.1], [5, 0.021, 1]]);
+const mid = ridge(655, [[34, 0.0024, 2.6], [14, 0.0061, 0.3], [6, 0.017, 4]]);
+const near = ridge(760, [[42, 0.0019, 5.1], [16, 0.0052, 1.4], [5, 0.014, 0.2]]);
+const front = ridge(880, [[30, 0.0016, 0.9], [10, 0.0047, 3.3]]);
+
+// the road follows the mid ridge, a little below its crest
+const roadPts: string[] = [];
+for (let x = -40; x <= W + 40; x += 20) {
+  const y = 690 + 34 * Math.sin(x * 0.0024 + 2.6) * 0.8 + 10 * Math.sin(x * 0.0061 + 0.3);
+  roadPts.push(`${x} ${y.toFixed(1)}`);
+}
+const road = `M${roadPts.join(' L')}`;
+const uid = variant;
+---
+
+<div class:list={['land', variant]} aria-hidden="true">
+  <svg
+    viewBox={variant === 'band' ? `0 500 ${W} 260` : `0 0 ${W} ${H}`}
+    preserveAspectRatio={variant === 'band' ? 'xMidYMid slice' : 'xMidYMax slice'}
+  >
+    <defs>
+      <linearGradient id={`sky-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#d7e7f6" />
+        <stop offset="0.45" stop-color="#eaf2f9" />
+        <stop offset="0.62" stop-color="#fbfcfb" />
+      </linearGradient>
+      <radialGradient id={`sun-${uid}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="#ffffff" stop-opacity="1" />
+        <stop offset="0.35" stop-color="#ffffff" stop-opacity="0.85" />
+        <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+      </radialGradient>
+      <linearGradient id={`sea-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#b9d4ec" />
+        <stop offset="1" stop-color="#8fb8de" />
+      </linearGradient>
+      <linearGradient id={`h1-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#cfe4da" /><stop offset="0.3" stop-color="#bcd8cc" />
+      </linearGradient>
+      <linearGradient id={`h2-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#a9d2b6" /><stop offset="0.35" stop-color="#8bbf9e" />
+      </linearGradient>
+      <linearGradient id={`h3-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7cb793" /><stop offset="0.4" stop-color="#5f9f79" />
+      </linearGradient>
+      <linearGradient id={`h4-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#55966f" /><stop offset="0.5" stop-color="#3f7f5c" />
+      </linearGradient>
+      <!-- brush: wobble the edges a little, then add paper grain -->
+      <filter id={`brush-${uid}`} x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.04" numOctaves="3" seed="4" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+      <filter id={`grain-${uid}`}>
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" />
+        <feColorMatrix values="0 0 0 0 0.1  0 0 0 0 0.2  0 0 0 0 0.25  0 0 0 0.09 0" />
+        <feComposite in2="SourceGraphic" operator="in" />
+      </filter>
+    </defs>
+
+    <rect width={W} height={H} fill={`url(#sky-${uid})`} />
+    <circle cx="1180" cy="430" r="260" fill={`url(#sun-${uid})`} />
+    <g class="clouds" fill="#ffffff" opacity="0.75" filter={`url(#brush-${uid})`}>
+      <ellipse cx="1050" cy="170" rx="210" ry="14" />
+      <ellipse cx="1180" cy="152" rx="120" ry="10" />
+      <ellipse cx="1390" cy="300" rx="130" ry="10" />
+      <ellipse cx="760" cy="330" rx="90" ry="7" />
+    </g>
+
+    <rect x="-120" y="560" width={W + 240} height="140" fill={`url(#sea-${uid})`} />
+    <g stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.7">
+      <line x1="200" y1="604" x2="260" y2="604" />
+      <line x1="560" y1="618" x2="600" y2="618" />
+      <line x1="980" y1="598" x2="1060" y2="598" />
+      <line x1="1300" y1="612" x2="1340" y2="612" />
+    </g>
+
+    <g filter={`url(#brush-${uid})`}>
+      <path d={far} fill={`url(#h1-${uid})`} />
+      <path d={mid} fill={`url(#h2-${uid})`} />
+      <path d={road} fill="none" stroke="#f3f6ee" stroke-width="5" stroke-linecap="round" opacity="0.9" />
+      <path d={near} fill={`url(#h3-${uid})`} />
+      <path d={front} fill={`url(#h4-${uid})`} />
+    </g>
+
+    {
+      rider && (
+        <g class="rider">
+          <g class="rider-body" fill="none" stroke="#2c4a5a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="-9" cy="-6" r="6" />
+            <circle cx="9" cy="-6" r="6" />
+            <path d="M-9 -6 L-2 -6 L4 -15 L-4 -15 Z M4 -15 L9 -6 M-2 -6 L-5 -17 M3 -18 L6 -18" />
+            <path d="M-4 -17 L1 -27 L5 -18" />
+            <circle cx="2" cy="-30" r="2.6" fill="#2c4a5a" stroke="none" />
+          </g>
+          <animateMotion dur="70s" repeatCount="indefinite" rotate="auto" path={road} />
+        </g>
+      )
+    }
+
+    <rect width={W} height={H} filter={`url(#grain-${uid})`} />
+  </svg>
+</div>
+
+<style>
+  .land {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .band {
+    position: relative;
+    inset: auto;
+    height: 160px;
+  }
+
+</style>

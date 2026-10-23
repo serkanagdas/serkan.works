@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import { about, links } from '../data/site';
+---
+
+<Base title="About">
+  <main class="col">
+    <p class="eyebrow">About</p>
+    <h1 class="title">Hello.</h1>
+    {about.map((p, i) => <p class:list={{ lede: i === 0 }} set:html={p} />)}
+
+    <h2 class="smallcaps">Write to me</h2>
+    <dl>
+      {
+        links.map((l) => (
+          <div>
+            <dt>{l.label}</dt>
+            <dd><a href={l.href} rel={l.href.startsWith('http') ? 'me' : undefined}>{l.value}</a></dd>
+          </div>
+        ))
+      }
+    </dl>
+  </main>
+</Base>
+
+<style>
+  .lede {
+    font-style: normal;
+    color: var(--ink);
+  }
+  h2 {
+    margin: 56px 0 14px;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--green);
+  }
+  dl {
+    margin: 0;
+  }
+  dl div {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 10px 0;
+    border-top: 1px solid var(--rule);
+  }
+  dt {
+    font-style: italic;
+    color: var(--ink-faint);
+  }
+  dd {
+    margin: 0;
+  }
+</style>

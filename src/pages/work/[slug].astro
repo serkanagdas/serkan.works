@@ -1,0 +1,93 @@
+---
+import Base from '../../layouts/Base.astro';
+import { work } from '../../data/site';
+
+export function getStaticPaths() {
+  return work.map((w, i) => ({ params: { slug: w.slug }, props: { i } }));
+}
+
+const { i } = Astro.props;
+const w = work[i];
+const prev = work[(i - 1 + work.length) % work.length];
+const next = work[(i + 1) % work.length];
+---
+
+<Base title={w.title} description={`${w.title}: ${w.line}`}>
+  <main class="col">
+    <p class="eyebrow"><a href="/work">Work</a> · {w.context}, {w.year}</p>
+    <h1 class="title">{w.title}</h1>
+    <p class="lede">{w.line}</p>
+    {w.body.map((p) => <p>{p}</p>)}
+
+    <h2 class="smallcaps">Notes</h2>
+    <ul class="notes">
+      {w.notes.map((n) => <li>{n}</li>)}
+    </ul>
+
+    <p class="stack smallcaps">{w.stack.join(' · ')}</p>
+
+    <nav class="pn" aria-label="More work">
+      <a href={`/work/${prev.slug}`}><span>Previous</span>{prev.title}</a>
+      <a href={`/work/${next.slug}`} class="next"><span>Next</span>{next.title}</a>
+    </nav>
+  </main>
+</Base>
+
+<style>
+  .eyebrow a {
+    text-decoration: none;
+  }
+  h2 {
+    margin: 48px 0 12px;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--green);
+  }
+  .notes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .notes li {
+    position: relative;
+    padding: 10px 0 10px 28px;
+    border-top: 1px solid var(--rule);
+  }
+  .notes li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 21px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50% 0;
+    background: var(--green);
+    opacity: 0.75;
+  }
+  .stack {
+    margin-top: 36px;
+    color: var(--blue);
+    font-size: 17px;
+  }
+  .pn {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .pn a {
+    text-decoration: none;
+    font-size: 20px;
+  }
+  .pn span {
+    display: block;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-faint);
+  }
+  .pn .next {
+    text-align: right;
+  }
+</style>
