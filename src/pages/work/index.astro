@@ -1,0 +1,84 @@
+---
+import Base from '../../layouts/Base.astro';
+import Plate from '../../components/Plate.astro';
+import { work } from '../../data/site';
+const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+---
+
+<Base title="Work">
+  <main class="wrap">
+    <header class="head">
+      <p class="sc kicker">Work</p>
+      <h1 class="page-title">Plates</h1>
+      <p class="sub">Things I’ve built, and a few still on the drawing board.</p>
+    </header>
+    <ol class="plates">
+      {
+        work.map((w, i) => (
+          <li>
+            <a href={`/work/${w.slug}`}>
+              <div class="frame"><Plate name={w.slug} /></div>
+              <p class="no sc">Plate {roman[i]}</p>
+              <h2>{w.title}</h2>
+              <p class="line">{w.line}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</Base>
+
+<style>
+  .wrap {
+    width: min(1100px, 100% - 48px);
+    margin: 0 auto;
+  }
+  .head {
+    margin: 80px auto 64px;
+    text-align: center;
+  }
+  .kicker {
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .plates {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 64px 40px;
+  }
+  .plates a {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+  }
+  .frame {
+    aspect-ratio: 10 / 7;
+    border: 1px solid var(--rule);
+    padding: 14px;
+    transition: border-color 0.3s;
+  }
+  .plates a:hover .frame {
+    border-color: var(--blue);
+  }
+  .no {
+    margin: 18px 0 2px;
+    font-size: 16px;
+    color: var(--green);
+  }
+  h2 {
+    margin: 0;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+  .line {
+    margin: 4px 0 0;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 18px;
+  }
+</style>

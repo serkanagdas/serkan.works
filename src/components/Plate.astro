@@ -1,0 +1,150 @@
+---
+// Small line drawings, one per project and per hobby, in the same hand as Fig. 1.
+interface Props {
+  name: string;
+}
+const { name } = Astro.props;
+const arcs = [40, 75, 110, 145];
+---
+
+<svg class="plate" viewBox="0 0 400 280" aria-hidden="true">
+  <g class="ln">
+    {
+      name === 'prospecting' && (
+        <g>
+          {arcs.map((r) => <path pathLength="1" d={`M${170 + r} 230 A${r} ${r} 0 0 0 ${170 - r} 230`} />)}
+          <path pathLength="1" d="M170 230 L274 126" class="g" />
+          <circle pathLength="1" cx="280" cy="120" r="8" class="g" />
+          <path pathLength="1" d="M40 230 L360 230" class="t" />
+        </g>
+      )
+    }
+    {
+      name === 'pitchdeck' && (
+        <g>
+          <path pathLength="1" d="M60 70 H340 V220 H60 Z" />
+          <path pathLength="1" d="M200 70 V220" />
+          <circle pathLength="1" cx="200" cy="145" r="30" />
+          <path pathLength="1" d="M60 110 H95 V180 H60 M340 110 H305 V180 H340" />
+          <circle pathLength="1" cx="262" cy="122" r="7" class="g" />
+        </g>
+      )
+    }
+    {
+      name === 'eser-tarama' && (
+        <g>
+          <path pathLength="1" d="M200 90 Q140 70 70 86 V222 Q140 206 200 226 Q260 206 330 222 V86 Q260 70 200 90 Z" />
+          <path pathLength="1" d="M200 90 V226" />
+          {[0, 1, 2, 3, 4].map((i) => (
+            <path pathLength="1" class="t" d={`M88 ${112 + i * 20} Q140 ${102 + i * 20} 184 ${114 + i * 20}`} />
+          ))}
+          <path pathLength="1" class="g" d="M228 150 L246 168 L290 118" />
+        </g>
+      )
+    }
+    {
+      name === 'e-door' && (
+        <g>
+          <path pathLength="1" d="M140 236 V120 A60 60 0 0 1 260 120 V236" />
+          <path pathLength="1" d="M156 236 V124 A44 44 0 0 1 244 124 V236" class="t" />
+          <circle pathLength="1" cx="226" cy="178" r="5" class="g" />
+          <path pathLength="1" d="M90 236 H310" />
+        </g>
+      )
+    }
+    {
+      name === 'ajana-gonder' && (
+        <g>
+          <circle pathLength="1" cx="90" cy="140" r="28" />
+          <circle pathLength="1" cx="200" cy="140" r="36" />
+          <circle pathLength="1" cx="310" cy="140" r="28" class="g" />
+          <path pathLength="1" d="M122 140 H160 M152 132 L162 140 L152 148 M240 140 H278 M270 132 L280 140 L270 148" />
+        </g>
+      )
+    }
+    {
+      name === 'the-rack' && (
+        <g>
+          <path pathLength="1" d="M120 50 H280 V240 H120 Z" />
+          {[0, 1, 2, 3].map((i) => (
+            <g>
+              <path pathLength="1" d={`M134 ${66 + i * 42} H266 V${96 + i * 42} H134 Z`} />
+              <circle pathLength="1" cx="252" cy={81 + i * 42} r="4" class={i === 3 ? 'g' : ''} />
+              <path pathLength="1" class="t" d={`M146 ${76 + i * 42} H200 M146 ${86 + i * 42} H190`} />
+            </g>
+          ))}
+        </g>
+      )
+    }
+    {
+      name === 'Cycling' && (
+        <g>
+          <circle pathLength="1" cx="120" cy="180" r="56" />
+          <circle pathLength="1" cx="280" cy="180" r="56" />
+          <path pathLength="1" d="M120 180 L196 180 L170 112 L120 180 M196 180 L270 118 L174 118 M270 118 L280 180 M270 118 L262 96 H284" />
+          <path pathLength="1" class="g" d="M160 104 H186" />
+        </g>
+      )
+    }
+    {
+      name === 'Kickboxing' && (
+        <g>
+          <path pathLength="1" d="M150 200 V120 Q150 70 205 70 H230 Q275 70 275 120 V170 Q275 200 245 200 Z" />
+          <path pathLength="1" d="M150 140 Q118 140 118 165 Q118 190 150 186" />
+          <path pathLength="1" d="M150 200 H245 V236 H150 Z" class="t" />
+          <path pathLength="1" class="g" d="M150 214 H245" />
+        </g>
+      )
+    }
+    {
+      name === 'Lego' && (
+        <g>
+          <path pathLength="1" d="M90 150 L200 110 L310 150 L200 190 Z" />
+          <path pathLength="1" d="M90 150 V200 L200 240 L310 200 V150 M200 190 V240" />
+          {[
+            [150, 140],
+            [200, 122],
+            [200, 158],
+            [250, 140],
+          ].map(([x, y], i) => (
+            <ellipse pathLength="1" cx={x} cy={y} rx="16" ry="7" class={i === 2 ? 'g' : ''} />
+          ))}
+        </g>
+      )
+    }
+    {
+      name === 'Games' && (
+        <g>
+          <path pathLength="1" d="M110 110 H290 Q330 110 334 160 L340 200 Q342 228 316 224 Q300 222 288 196 L276 176 H124 L112 196 Q100 222 84 224 Q58 228 60 200 L66 160 Q70 110 110 110 Z" />
+          <path pathLength="1" d="M120 142 H150 M135 127 V157" />
+          <circle pathLength="1" cx="262" cy="132" r="7" class="g" />
+          <circle pathLength="1" cx="282" cy="150" r="7" />
+          <circle pathLength="1" cx="242" cy="150" r="7" />
+          <circle pathLength="1" cx="262" cy="166" r="7" />
+        </g>
+      )
+    }
+  </g>
+</svg>
+
+<style>
+  .plate {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .ln {
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .t {
+    stroke-width: 1;
+    opacity: 0.7;
+  }
+  .g {
+    stroke: var(--green);
+  }
+</style>

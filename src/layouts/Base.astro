@@ -1,28 +1,30 @@
 ---
 import '../styles/global.css';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
 import { site, links } from '../data/site';
 
 interface Props {
   title?: string;
   description?: string;
-  page?: 'home' | 'pictures' | 'other';
+  home?: boolean;
 }
 
-const { title, description = site.description, page = 'other' } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const { title, description = site.description, home = false } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}, ${site.location}`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
-
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/about', label: 'About' },
+  { href: '/work', label: 'Work' },
+  { href: '/pictures', label: 'Pictures' },
+];
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: site.name,
   url: site.url,
   jobTitle: site.role,
-  worksFor: { '@type': 'Organization', name: 'E Dijital Bilişim Hizmetleri', url: 'https://edoor.com.tr' },
+  worksFor: { '@type': 'Organization', name: 'E Dijital Bilişim Hizmetleri' },
   homeLocation: { '@type': 'Place', name: 'İstanbul, Türkiye' },
-  knowsAbout: ['Applied AI', 'Agentic systems', 'Full-stack development', 'PostgreSQL', 'Self-hosting'],
   sameAs: links.filter((l) => l.href.startsWith('https')).map((l) => l.href),
 };
 ---
@@ -34,43 +36,93 @@ const person = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="author" content={site.name} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#f3f5f9" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#05090f" media="(prefers-color-scheme: dark)" />
-
+    <meta name="theme-color" content="#fdfdfb" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={site.domain} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL('/og.png', site.url).href} />
     <meta name="twitter:card" content="summary_large_image" />
-
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="Plain-text summary for language models" />
-    <link rel="sitemap" href="/sitemap.xml" />
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..600;1,400..500&display=swap"
       rel="stylesheet"
     />
-
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
-    <script is:inline>
-      // Real refraction only where backdrop-filter accepts SVG filters (Chromium).
-      if (navigator.userAgentData?.brands?.some((b) => /Chromium/.test(b.brand))) {
-        document.documentElement.classList.add('refract');
-      }
-    </script>
   </head>
-  <body data-page={page}>
-    <Nav page={page} />
-    <main>
-      <slot />
-    </main>
-    <Footer />
+  <body class:list={{ home }}>
+    <header class="sheet">
+      <a href="/" class="sc">{home ? 'S. Ağdaş' : site.name}</a>
+      {
+        home ? (
+          <span class="sc mid">Sheet 1 of 4</span>
+        ) : (
+          <nav aria-label="Primary">
+            {nav.map((n) => (
+              <a href={n.href} class="sc" aria-current={path.startsWith(n.href) ? 'page' : undefined}>
+                {n.label}
+              </a>
+            ))}
+          </nav>
+        )
+      }
+      <span class="sc right">{site.location}</span>
+    </header>
+    <slot />
   </body>
 </html>
+
+<style>
+  .sheet {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: baseline;
+    gap: 16px;
+    width: min(1100px, 100% - 48px);
+    margin: 0 auto;
+    padding: 26px 0 14px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 17px;
+    color: var(--ink-soft);
+  }
+
+  .sheet a {
+    text-decoration: none;
+  }
+
+  .sheet > a {
+    color: var(--ink);
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  nav {
+    display: flex;
+    gap: 26px;
+  }
+
+  nav a[aria-current='page'] {
+    color: var(--blue);
+  }
+
+  body:not(.home) {
+    padding-bottom: 120px;
+  }
+
+  @media (max-width: 560px) {
+    .sheet {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 4px;
+    }
+    .right {
+      display: none;
+    }
+  }
+</style>

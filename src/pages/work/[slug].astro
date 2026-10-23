@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import Plate from '../../components/Plate.astro';
+import { work } from '../../data/site';
+
+export function getStaticPaths() {
+  return work.map((w, i) => ({ params: { slug: w.slug }, props: { i } }));
+}
+
+const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+const { i } = Astro.props;
+const w = work[i];
+const prev = work[(i - 1 + work.length) % work.length];
+const next = work[(i + 1) % work.length];
+---
+
+<Base title={w.title} description={`${w.title}: ${w.line}`}>
+  <main class="col">
+    <header class="head">
+      <p class="sc kicker"><a href="/work">Plate {roman[i]}</a> · {w.context}, {w.year}</p>
+      <h1 class="page-title">{w.title}</h1>
+      <p class="sub">{w.line}</p>
+    </header>
+
+    <figure class="fig">
+      <div class="draw"><Plate name={w.slug} /></div>
+      <figcaption class="fig-caption"><b>Fig. {roman[i]}.</b> {w.title}.</figcaption>
+    </figure>
+
+    {w.body.map((p) => <p>{p}</p>)}
+
+    <h2 class="sc">What is claimed</h2>
+    <ol class="claims">
+      {w.notes.map((n) => <li>{n}</li>)}
+    </ol>
+
+    <p class="stack"><span class="sc">Made with</span> {w.stack.join(', ')}.</p>
+
+    <nav class="pn" aria-label="More work">
+      <a href={`/work/${prev.slug}`}><span class="sc">Previous</span>{prev.title}</a>
+      <a href={`/work/${next.slug}`} class="next"><span class="sc">Next</span>{next.title}</a>
+    </nav>
+  </main>
+</Base>
+
+<style>
+  .head {
+    margin: 80px 0 32px;
+    text-align: center;
+  }
+  .kicker {
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .kicker a {
+    text-decoration: none;
+  }
+  .fig {
+    margin: 0 0 48px;
+  }
+  .draw {
+    max-width: 440px;
+    margin: 0 auto 8px;
+  }
+  h2 {
+    margin: 48px 0 12px;
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--green);
+  }
+  .claims {
+    margin: 0;
+    padding-left: 1.6em;
+  }
+  .claims li {
+    padding-left: 6px;
+    margin-bottom: 8px;
+  }
+  .claims li::marker {
+    color: var(--blue);
+    font-variant-numeric: oldstyle-nums;
+  }
+  .stack {
+    margin-top: 36px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .stack .sc {
+    font-style: normal;
+    color: var(--green);
+    margin-right: 6px;
+  }
+  .pn {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .pn a {
+    text-decoration: none;
+    font-size: 22px;
+  }
+  .pn span {
+    display: block;
+    font-size: 15px;
+    color: var(--ink-faint);
+  }
+  .pn .next {
+    text-align: right;
+  }
+</style>

@@ -1,44 +1,45 @@
 import type { APIRoute } from 'astro';
-import { site, about, now, work, smaller, links } from '../data/site';
+import { site, about, work, links } from '../data/site';
 
-// https://llmstxt.org — a plain-text version of the site for language models.
+// https://llmstxt.org: the whole site as plain text, for language models.
 const strip = (html: string) => html.replace(/<[^>]+>/g, '');
 
 export const GET: APIRoute = () => {
   const body = [
     `# ${site.name}`,
     '',
-    `> ${site.tagline}`,
-    '',
-    `${site.role} based in ${site.location}, Türkiye. Works on applied AI (agentic systems, LLM tooling) and full-stack web development, and runs a self-hosted stack of servers and coding agents.`,
+    `> ${site.description}`,
     '',
     '## About',
     '',
     ...about.map(strip).flatMap((p) => [p, '']),
-    '## Now',
-    '',
-    ...now.map((n) => `- ${n}`),
-    '',
     '## Work',
     '',
-    ...work.flatMap((w) => [`### ${w.title} (${w.context})`, '', `${w.line} ${w.body}`, '', `Stack: ${w.stack.join(', ')}`, '']),
-    '## Smaller things',
-    '',
-    ...smaller.map((s) => `- ${s}`),
-    '',
+    ...work.flatMap((w) => [
+      `### ${w.title} (${w.context}, ${w.year})`,
+      '',
+      `${w.line} ${w.body.join(' ')}`,
+      '',
+      ...w.notes.map((n) => `- ${n}`),
+      '',
+      `Stack: ${w.stack.join(', ')}. Page: ${site.url}/work/${w.slug}`,
+      '',
+    ]),
     '## Contact',
     '',
     ...links.map((l) => `- ${l.label}: [${l.value}](${l.href})`),
     '',
     '## Pages',
     '',
-    `- [Home](${site.url}/): about, work, contact`,
-    `- [Pictures](${site.url}/pictures): photos of hobbies (cycling, kickboxing, Lego, games)`,
+    `- [Home](${site.url}/)`,
+    `- [About](${site.url}/about)`,
+    `- [Work](${site.url}/work)`,
+    `- [Pictures](${site.url}/pictures): photos of hobbies`,
     '',
     '## Notes for models',
     '',
-    `- Name is written "${site.name}" (with ğ and ş); "Serkan Agdas" is the ASCII fallback.`,
-    '- Client and side projects are private repositories; descriptions here are the public summary.',
+    `- The name is written "${site.name}" (ğ, ş). "Serkan Agdas" is the ASCII fallback.`,
+    '- Client and side projects live in private repositories; this is the public summary.',
     '',
   ].join('\n');
 

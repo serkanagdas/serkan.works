@@ -1,50 +1,16 @@
-// Drop photos into public/pictures/ and list them here.
-// Each one is shown as ASCII first and "develops" into the photo on hover/tap.
-// Entries without `src` render the hand-drawn ASCII placeholder for their tag.
+// Put photos in public/pictures/ and add `src` to an entry.
+// Entries without a photo show an empty frame with the caption.
 
 export type Picture = {
-  tag: 'cycling' | 'kickboxing' | 'lego' | 'games';
+  title: string;
   caption: string;
-  src?: string; // e.g. '/pictures/bosphorus-ride.jpg'
+  src?: string; // e.g. '/pictures/morning-ride.jpg'
   alt?: string;
 };
 
 export const pictures: Picture[] = [
-  { tag: 'cycling', caption: 'Early ride, before the city wakes up.' },
-  { tag: 'kickboxing', caption: 'Monday, Wednesday. Non-negotiable.' },
-  { tag: 'lego', caption: 'Instructions followed, mostly.' },
-  { tag: 'games', caption: 'Usually on a server I set up for the occasion.' },
+  { title: 'Cycling', caption: 'Early rides, before the city wakes up.' },
+  { title: 'Kickboxing', caption: 'Mondays and Wednesdays.' },
+  { title: 'Lego', caption: 'Instructions followed, mostly.' },
+  { title: 'Games', caption: 'Often on a server set up for the occasion.' },
 ];
-
-export const placeholders: Record<Picture['tag'], string> = {
-  cycling: String.raw`
-           __o
-         _ \<_
-        (_)/(_)
-  ~~~~~~~~~~~~~~~~~~~~`,
-  kickboxing: String.raw`
-      ________
-     /  _  _  \__
-    |  | || |    \
-    |  |_||_|  _ |
-    |         / /
-     \_______/_/
-     |_______|
-     |_______|`,
-  lego: String.raw`
-     ___________
-    / () () () /|
-   / () () () / |
-  /__________/  |
-  |          |  /
-  |          | /
-  |__________|/`,
-  games: String.raw`
-    _____________________
-   /  _            ( )   \
-  | _| |_       ( )  ( )  |
-  ||_   _|         ( )    |
-  |  |_|    [] []         |
-   \       ______        /
-    \_____/      \______/`,
-};

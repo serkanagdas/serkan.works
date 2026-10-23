@@ -1,310 +1,110 @@
 ---
 import Base from '../layouts/Base.astro';
-import AsciiHero from '../components/AsciiHero.astro';
-import { site, about, now, work, smaller, links } from '../data/site';
+import Bicycle from '../components/Bicycle.astro';
+import { site } from '../data/site';
 ---
 
-<Base page="home">
-  <header class="intro col">
-    <h1>{site.name}</h1>
-    <p class="tagline">{site.tagline}</p>
-  </header>
-
-  <div class="wide hero">
-    <AsciiHero />
-  </div>
-
-  <section id="about" class="col">
-    <h2 class="label">about</h2>
-    {about.map((p) => <p set:html={p} />)}
-
-    <aside class="now glass" aria-label="Now">
-      <span class="now-k mono">now</span>
-      <ul>
-        {now.map((n) => <li>{n}</li>)}
-      </ul>
-    </aside>
-  </section>
-
-  <section id="work" class="col">
-    <h2 class="label">work</h2>
-    <ul class="work">
-      {
-        work.map((w, i) => (
-          <li>
-            <details open={i < 2}>
-              <summary>
-                <span class="w-title">{w.title}</span>
-                <span class="w-line">{w.line}</span>
-                <span class="w-ctx mono">{w.context}</span>
-                <span class="w-tog mono" aria-hidden="true" />
-              </summary>
-              <div class="w-body">
-                <p>{w.body}</p>
-                <p class="w-stack mono">{w.stack.join(' · ')}</p>
-              </div>
-            </details>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-
-  <section class="col">
-    <h2 class="label">smaller things</h2>
-    <ul class="small">
-      {smaller.map((s) => <li>{s}</li>)}
-    </ul>
-  </section>
-
-  <section id="contact" class="col">
-    <h2 class="label">contact</h2>
-    <p class="muted">
-      Email is the best way in. Happy to talk about agents, home servers, or anything with a Postgres database
-      underneath.
-    </p>
-    <dl class="contact">
-      {
-        links.map((l) => (
-          <div>
-            <dt class="mono">{l.label}</dt>
-            <dd>
-              <a href={l.href} rel={l.href.startsWith('http') ? 'me noopener' : undefined}>
-                {l.value}
-              </a>
-            </dd>
-          </div>
-        ))
-      }
-    </dl>
-  </section>
+<Base home>
+  <main class="sheet-body">
+    <div class="intro">
+      <h1>{site.name}</h1>
+      <p class="sub">Software engineer in İstanbul, and an optimist by trade.</p>
+    </div>
+    <figure class="fig">
+      <div class="draw"><Bicycle /></div>
+      <figcaption class="fig-caption"><b>Fig. 1.</b> An engineer, on the way somewhere good.</figcaption>
+    </figure>
+    <nav aria-label="Primary" class="sc">
+      <a href="/about">About</a>
+      <a href="/work">Work</a>
+      <a href="/pictures">Pictures</a>
+      <a href="mailto:hello@serkan.works">Write</a>
+    </nav>
+  </main>
 </Base>
 
 <style>
+  :global(body.home) {
+    height: 100svh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sheet-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(1100px, 100% - 48px);
+    margin: 0 auto;
+    padding: clamp(20px, 5vh, 56px) 0 clamp(20px, 4vh, 40px);
+  }
+
   .intro {
-    margin-top: 72px;
+    text-align: center;
   }
 
   h1 {
     margin: 0;
-    font: 600 clamp(30px, 5vw, 40px)/1.1 var(--sans);
-    letter-spacing: -0.03em;
-  }
-
-  .tagline {
-    margin: 14px 0 0;
-    max-width: 34em;
-    font-size: 18px;
-    line-height: 1.55;
-    color: var(--ink-2);
-  }
-
-  .hero {
-    margin-top: 28px;
-  }
-
-  /* ── now ── */
-  .now {
-    display: flex;
-    gap: 18px;
-    margin-top: 28px;
-    padding: 16px 20px;
-    border-radius: 18px;
-  }
-
-  .now-k {
-    flex: none;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--blue);
-    padding-top: 2px;
-  }
-
-  .now-k::before {
-    content: '';
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    margin-right: 8px;
-    vertical-align: 1px;
-    border-radius: 50%;
-    background: var(--blue);
-    box-shadow: 0 0 0 3px var(--blue-wash);
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    50% {
-      box-shadow: 0 0 0 6px transparent;
-    }
-  }
-
-  .now ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: 15px;
-    color: var(--ink-2);
-  }
-
-  /* ── work ── */
-  .work {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid var(--line);
-  }
-
-  .work li {
-    border-bottom: 1px solid var(--line);
-  }
-
-  summary {
-    display: grid;
-    grid-template-columns: 1fr auto 18px;
-    grid-template-areas:
-      'title ctx tog'
-      'line  line .';
-    gap: 2px 16px;
-    padding: 16px 12px;
-    margin-inline: -12px;
-    border-radius: 12px;
-    cursor: pointer;
-    list-style: none;
-    transition: background-color 0.2s;
-  }
-
-  summary::-webkit-details-marker {
-    display: none;
-  }
-
-  summary:hover {
-    background: var(--blue-wash);
-  }
-
-  .w-title {
-    grid-area: title;
-    font-weight: 500;
+    font-weight: 400;
+    font-size: clamp(44px, 6.5vw, 76px);
+    line-height: 1;
     letter-spacing: -0.01em;
   }
 
-  .w-line {
-    grid-area: line;
-    color: var(--ink-2);
-    font-size: 15px;
+  .sub {
+    font-size: clamp(19px, 2vw, 24px);
   }
 
-  .w-ctx {
-    grid-area: ctx;
-    align-self: center;
-    font-size: 12px;
-    color: var(--ink-3);
+  .fig {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    margin: clamp(12px, 3vh, 32px) 0 0;
+    display: flex;
+    flex-direction: column;
   }
 
-  .w-tog {
-    grid-area: tog;
-    align-self: center;
-    font-size: 14px;
-    color: var(--ink-3);
-    text-align: right;
+  .draw {
+    flex: 1;
+    min-height: 0;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
   }
 
-  .w-tog::before {
-    content: '+';
+  figcaption {
+    margin-top: 10px;
   }
 
-  details[open] .w-tog::before {
-    content: '−';
-    color: var(--blue);
+  nav {
+    display: flex;
+    gap: clamp(20px, 4vw, 44px);
+    margin-top: clamp(14px, 3vh, 30px);
+    font-size: 20px;
   }
 
-  details::details-content {
-    block-size: 0;
-    overflow: hidden;
-    transition:
-      block-size 0.3s ease,
-      content-visibility 0.3s allow-discrete;
+  nav a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: border-color 0.2s, color 0.2s;
   }
 
-  details[open]::details-content {
-    block-size: auto;
-  }
-
-  .w-body {
-    padding: 0 0 18px;
-    font-size: 15.5px;
-  }
-
-  .w-body p {
-    margin: 0 0 10px;
-  }
-
-  .w-stack {
-    font-size: 12px;
-    color: var(--blue-ink);
-    margin: 0 !important;
-  }
-
-  /* ── smaller ── */
-  .small {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    color: var(--ink-2);
-    font-size: 15.5px;
-  }
-
-  .small li {
-    position: relative;
-    padding-left: 26px;
-    margin-bottom: 10px;
-  }
-
-  .small li::before {
-    content: '+-';
-    position: absolute;
-    left: 0;
-    top: 2px;
-    font: 400 12px/1.65 var(--mono);
-    color: var(--ink-3);
-  }
-
-  /* ── contact ── */
-  .contact {
-    margin: 22px 0 0;
-  }
-
-  .contact div {
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    padding: 9px 0;
-    border-bottom: 1px dashed var(--line);
-  }
-
-  .contact dt {
-    font-size: 12.5px;
-    color: var(--ink-3);
-    padding-top: 2px;
-  }
-
-  .contact dd {
-    margin: 0;
+  nav a:hover {
+    border-color: var(--blue);
   }
 
   @media (max-width: 560px) {
-    summary {
-      grid-template-columns: 1fr 18px;
-      grid-template-areas:
-        'title tog'
-        'line  .'
-        'ctx   .';
+    .draw {
+      margin-inline: -8px;
+      width: calc(100% + 16px);
     }
-    .w-ctx {
-      margin-top: 4px;
-    }
-    .now {
-      flex-direction: column;
-      gap: 8px;
+    nav {
+      gap: 18px;
+      font-size: 18px;
     }
   }
 </style>

@@ -1,0 +1,175 @@
+---
+// Fig. 1: a bicycle in the manner of an old patent drawing, with a few annotations.
+interface Props {
+  labels?: boolean;
+}
+const { labels = true } = Astro.props;
+
+const R = { x: 250, y: 320 }; // rear hub
+const F = { x: 650, y: 320 }; // front hub
+const BB = { x: 420, y: 320 }; // bottom bracket
+const rim = 118;
+const spokes = Array.from({ length: 18 }, (_, i) => (i * Math.PI) / 9);
+const spoke = (c: { x: number; y: number }, a: number) =>
+  `M${(c.x + Math.cos(a) * 10).toFixed(1)} ${(c.y + Math.sin(a) * 10).toFixed(1)} L${(c.x + Math.cos(a + 0.35) * (rim - 6)).toFixed(1)} ${(c.y + Math.sin(a + 0.35) * (rim - 6)).toFixed(1)}`;
+---
+
+<svg class="bike" viewBox="0 0 900 490" role="img" aria-labelledby="fig1">
+  <title id="fig1">A line drawing of a bicycle. The wheels are labelled hardware and software, the chain “the part that keeps going”.</title>
+
+  <g class="ink">
+    {[R, F].map((c) => (
+      <g>
+        <circle cx={c.x} cy={c.y} r={rim} pathLength="1" />
+        <circle cx={c.x} cy={c.y} r={rim - 7} pathLength="1" class="thin" />
+        <circle cx={c.x} cy={c.y} r="9" pathLength="1" />
+        {spokes.map((a) => <path d={spoke(c, a)} pathLength="1" class="hair" />)}
+      </g>
+    ))}
+
+    <!-- frame -->
+    <path pathLength="1" d={`M${BB.x} ${BB.y} L${R.x} ${R.y} L388 182 L${BB.x} ${BB.y} L606 206 L602 186 L392 186`} />
+    <path pathLength="1" d={`M606 206 L${F.x} ${F.y}`} />
+    <path pathLength="1" d="M602 186 L596 160 Q594 148 606 146 L628 146 Q646 147 646 162 Q646 176 632 178" />
+    <!-- seat post and saddle -->
+    <path pathLength="1" d="M388 182 L380 150" />
+    <path pathLength="1" d="M346 148 Q372 140 404 146 Q406 152 396 154 L356 154 Q344 154 346 148 Z" />
+    <!-- drivetrain -->
+    <circle cx={BB.x} cy={BB.y} r="30" pathLength="1" />
+    <circle cx={BB.x} cy={BB.y} r="24" pathLength="1" class="thin" />
+    <circle cx={R.x} cy={R.y} r="14" pathLength="1" />
+    <path pathLength="1" class="chain" d={`M${BB.x} ${BB.y - 30} L${R.x} ${R.y - 14} M${BB.x} ${BB.y + 30} L${R.x} ${R.y + 14}`} />
+    <path pathLength="1" d={`M${BB.x} ${BB.y} L448 372 M436 372 L462 372`} />
+    <path pathLength="1" d={`M${BB.x} ${BB.y} L392 268 M380 268 L404 268`} />
+  </g>
+
+  <!-- ground line -->
+  <path class="ground" pathLength="1" d="M90 440 L810 440" />
+
+  {
+    labels && (
+      <g class="notes">
+        <path class="lead" pathLength="1" d="M172 232 L120 152 L24 152" />
+        <text x="24" y="142">hardware</text>
+        <path class="lead" pathLength="1" d="M728 232 L780 152 L876 152" />
+        <text x="876" y="142" text-anchor="end">software</text>
+        <path class="lead" pathLength="1" d="M640 148 L670 72 L876 72" />
+        <text x="876" y="62" text-anchor="end">curiosity, mostly</text>
+        <path class="lead" pathLength="1" d="M335 336 L335 452" />
+        <text x="345" y="478">the part that keeps going</text>
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .bike {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .ink {
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .thin {
+    stroke-width: 1;
+  }
+
+  .hair {
+    stroke-width: 0.7;
+    opacity: 0.7;
+  }
+
+  .chain {
+    stroke-dasharray: 0.006 0.004;
+  }
+
+  .ground {
+    fill: none;
+    stroke: var(--ink-faint);
+    stroke-width: 1;
+  }
+
+  .notes .lead {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 1;
+  }
+
+  .notes text {
+    font: italic 21px var(--serif);
+    fill: var(--green);
+  }
+
+  @media (max-width: 640px) {
+    .notes text {
+      font-size: 34px;
+    }
+  }
+
+  /* drawn once, as if by hand */
+  .ink :is(path, circle):not(.chain),
+  .ground,
+  .lead {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 2.2s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+  }
+
+  .ink circle {
+    animation-duration: 2.6s;
+  }
+
+  .hair {
+    animation-delay: 0.6s !important;
+  }
+
+  .lead {
+    animation-delay: 1.8s !important;
+    animation-duration: 1s !important;
+  }
+
+  .notes text {
+    opacity: 0;
+    animation: appear 0.8s 2.4s ease forwards;
+  }
+
+  .chain {
+    opacity: 0;
+    animation: appear 0.8s 1.6s ease forwards;
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes appear {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ink :is(path, circle),
+    .ground,
+    .lead,
+    .notes text,
+    .chain {
+      animation: none;
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    .chain {
+      stroke-dasharray: 0.006 0.004;
+    }
+  }
+</style>

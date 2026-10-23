@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import { about, links } from '../data/site';
+---
+
+<Base title="About">
+  <main class="col">
+    <header class="head">
+      <p class="sc kicker">About</p>
+      <h1 class="page-title">Hello.</h1>
+    </header>
+    {about.map((p, i) => <p class:list={{ first: i === 0 }} set:html={p} />)}
+
+    <h2 class="sc">Correspondence</h2>
+    <ul class="links">
+      {
+        links.map((l) => (
+          <li>
+            <span>{l.label}</span>
+            <a href={l.href} rel={l.href.startsWith('http') ? 'me' : undefined}>{l.value}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Base>
+
+<style>
+  .head {
+    margin: 80px 0 40px;
+    text-align: center;
+  }
+  .kicker {
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .first::first-letter {
+    float: left;
+    font-size: 3.6em;
+    line-height: 0.82;
+    padding: 6px 8px 0 0;
+    color: var(--blue);
+  }
+  h2 {
+    margin: 64px 0 12px;
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--green);
+    text-align: center;
+  }
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .links li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 6px 0;
+  }
+  .links li::after {
+    content: none;
+  }
+  .links span {
+    font-style: italic;
+    color: var(--ink-soft);
+    flex: none;
+  }
+  .links span::after {
+    content: '';
+    display: inline-block;
+  }
+  .links li {
+    background: radial-gradient(circle, var(--ink-faint) 0.8px, transparent 1.2px) 0 72% / 7px 7px repeat-x;
+  }
+  .links span,
+  .links a {
+    background: var(--paper);
+  }
+  .links span {
+    padding-right: 8px;
+  }
+  .links a {
+    margin-left: auto;
+    padding-left: 8px;
+    text-decoration: none;
+  }
+</style>
