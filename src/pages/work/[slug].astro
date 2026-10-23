@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Motif from '../../components/Motif.astro';
+import Ascii from '../../components/Ascii.astro';
 import { work } from '../../data/site';
 
 export function getStaticPaths() {
@@ -21,7 +21,7 @@ const next = work[(i + 1) % work.length];
           <h1>{w.title}</h1>
           <p class="line">{w.line}</p>
         </div>
-        <div class="art"><Motif name={w.slug} tone="deep" /></div>
+        <div class="art"><Ascii scene={w.slug} tone={i % 2 ? 'deep-green' : 'deep'} cell={7} /></div>
       </div>
     </section>
 

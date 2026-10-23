@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Motif from '../../components/Motif.astro';
+import Ascii from '../../components/Ascii.astro';
 import { work } from '../../data/site';
 ---
 
@@ -16,7 +16,7 @@ import { work } from '../../data/site';
           <li>
             <a href={`/work/${w.slug}`}>
               <div class:list={['plate', i % 2 ? 'g' : 'b']}>
-                <Motif name={w.slug} />
+                <Ascii scene={w.slug} />
               </div>
               <div class="meta">
                 <h2>{w.title}</h2>

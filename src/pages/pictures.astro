@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import Motif from '../components/Motif.astro';
+import Ascii from '../components/Ascii.astro';
 import { pictures } from '../data/pictures';
 ---
 
@@ -16,7 +16,7 @@ import { pictures } from '../data/pictures';
           <li>
             <figure>
               <div class:list={['plate', i % 3 === 1 ? 'g' : 'b']}>
-                {p.src ? <img src={p.src} alt={p.alt ?? p.caption} loading="lazy" decoding="async" /> : <Motif name={p.title} />}
+                {p.src ? <img src={p.src} alt={p.alt ?? p.caption} loading="lazy" decoding="async" /> : <Ascii scene={p.title} />}
               </div>
               <figcaption>
                 <strong>{p.title}</strong>

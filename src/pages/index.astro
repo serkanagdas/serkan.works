@@ -1,11 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
+import Ascii from '../components/Ascii.astro';
 import { site } from '../data/site';
 ---
 
 <Base home>
   <main class="poster">
-    <div class="sun" aria-hidden="true"></div>
+    <div class="scene"><Ascii scene="poster" cell="auto" /></div>
     <div class="field">
       <nav aria-label="Primary">
         <a href="/about">About</a>
@@ -37,21 +38,9 @@ import { site } from '../data/site';
     overflow: hidden;
   }
 
-  .sun {
+  .scene {
     position: absolute;
-    right: 9vw;
-    bottom: calc(var(--h) - var(--s) * 0.28);
-    width: var(--s);
-    height: var(--s);
-    border-radius: 50%;
-    background: var(--blue);
-    animation: sunrise 2.4s cubic-bezier(0.16, 0.8, 0.2, 1) both;
-  }
-
-  @keyframes sunrise {
-    from {
-      transform: translateY(42%);
-    }
+    inset: 0;
   }
 
   .field {
@@ -60,7 +49,6 @@ import { site } from '../data/site';
     right: 0;
     bottom: 0;
     height: var(--h);
-    background: var(--green);
     color: #fff;
     display: flex;
     justify-content: space-between;
@@ -78,6 +66,7 @@ import { site } from '../data/site';
   }
 
   .field a {
+    text-shadow: 0 1px 10px rgba(10, 70, 40, 0.45);
     text-decoration: none;
     border-bottom: 2px solid rgba(255, 255, 255, 0.35);
     transition: border-color 0.2s;
@@ -130,9 +119,6 @@ import { site } from '../data/site';
       --h: 26%;
       --s: 78vw;
     }
-    .sun {
-      right: 11vw;
-    }
     .side {
       position: absolute;
       left: var(--pad);
@@ -144,9 +130,4 @@ import { site } from '../data/site';
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .sun {
-      animation: none;
-    }
-  }
 </style>

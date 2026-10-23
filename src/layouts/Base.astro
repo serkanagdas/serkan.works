@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Ascii from '../components/Ascii.astro';
 import { site, links } from '../data/site';
 
 interface Props {
@@ -72,11 +73,8 @@ const person = {
     <slot />
     {
       !home && (
-        <footer class="end frame" aria-hidden="true">
-          <svg viewBox="0 0 120 40">
-            <circle cx="60" cy="40" r="22" fill="var(--blue)" />
-            <rect x="0" y="34" width="120" height="6" fill="var(--green)" />
-          </svg>
+        <footer class="end" aria-hidden="true">
+          <Ascii scene="meadow" cell={7} />
         </footer>
       )
     }
@@ -129,13 +127,10 @@ const person = {
   .end {
     margin-top: auto;
     padding-top: 120px;
-    padding-bottom: 0;
   }
 
-  .end svg {
-    display: block;
-    width: 120px;
-    margin: 0 auto;
+  .end :global(canvas) {
+    height: 210px;
   }
 
   @media (max-width: 520px) {

@@ -15,4 +15,4 @@ npm run build    # static output in dist/
 - `src/pages/work/[slug].astro`: one page per project, generated from `work` in `site.ts`.
 - `public/robots.txt`, `src/pages/llms.txt.ts`, `src/pages/sitemap.xml.ts`: for crawlers and language models.
 
-Design directions live on separate branches: `main` (ASCII + liquid glass), `alt/plein-air`, `alt/horizon`, `alt/figure`.
+Design directions live on separate branches: `main` (ASCII + liquid glass), `alt/plein-air`, `alt/horizon`, `alt/horizon-ascii` (horizon with animated ASCII scenes, see `src/lib/scenes/`), `alt/figure`.
