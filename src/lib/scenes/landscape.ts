@@ -1,5 +1,4 @@
-// The meadow: a blue sun over a green field, grass moving in the wind, daisies,
-// and a stream running down from the horizon with light on it.
+// A blue halftone sun over a plain green field, with slow clouds in the sky.
 
 import { clamp, hash, noise, smooth, type Grid, type Scene } from './util';
 
@@ -8,14 +7,12 @@ type Layout = {
   sx: number; // sun centre, px
   sy: number;
   sr: number; // sun radius, px
-  riverX: [number, number]; // stream centre at the horizon and at the bottom edge
-  riverW: [number, number]; // stream width at the horizon and at the bottom edge
   clouds: number;
   rise: boolean;
 };
 
 // Mirrors the poster layout in index.astro so the sun sits exactly where the CSS one used to.
-function poster({ W, H, cw }: Grid): Layout {
+function poster({ W, H }: Grid): Layout {
   const narrow = W < 720;
   const h = narrow ? 0.26 : 0.3;
   const s = narrow ? 0.78 * W : Math.min(0.64 * H, 0.46 * W);
@@ -27,14 +24,12 @@ function poster({ W, H, cw }: Grid): Layout {
     sx,
     sy: hy - 0.22 * s,
     sr: s / 2,
-    riverX: [sx, narrow ? W * 0.74 : W * 0.68],
-    riverW: [cw * 2, narrow ? W * 0.24 : W * 0.15],
     clouds: 1,
     rise: true,
   };
 }
 
-function meadow({ W, H, cw }: Grid): Layout {
+function meadow({ W, H }: Grid): Layout {
   const hy = H * 0.45;
   const sr = Math.min(H * 0.36, 80);
   return {
@@ -42,14 +37,10 @@ function meadow({ W, H, cw }: Grid): Layout {
     sx: W / 2,
     sy: hy + sr * 0.1,
     sr,
-    riverX: [W / 2, W / 2 + Math.min(W * 0.12, 160)],
-    riverW: [cw * 1.5, Math.min(W * 0.2, 260)],
     clouds: 0.7,
     rise: false,
   };
 }
-
-const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 
 function paint(g: Grid, L: Layout) {
   const { W, H, cw, ch, cols, rows, t, put } = g;
@@ -101,62 +92,8 @@ function paint(g: Grid, L: Layout) {
     }
   }
 
-  // ── field ──
+  // ── field: a plain green bar, the sun sets into it ──
   g.fill(0, L.hy, W, H - L.hy, 'green');
-  const daisies: [number, number, number][] = [];
-
-  for (let y = Math.floor(L.hy / ch); y < rows; y++) {
-    const top = Math.max(y * ch, L.hy);
-    const py = (y + 0.5) * ch;
-    const p = clamp((py - L.hy) / (H - L.hy));
-    const pk = smooth(0, 1, p);
-    const cx = lerp(L.riverX[0], L.riverX[1], pk) + Math.sin(p * 6.5 + 0.8) * W * 0.035 * p;
-    const hw = lerp(L.riverW[0], L.riverW[1], Math.pow(p, 1.25)) / 2;
-
-    g.fill(cx - hw, top, hw * 2, (y + 1) * ch - top, 'blue');
-    if (py < L.hy) continue;
-
-    for (let x = 0; x < cols; x++) {
-      const px = (x + 0.5) * cw;
-      const off = Math.abs(px - cx);
-
-      if (off < hw) {
-        // light on the water travels downstream; the sun's reflection sits near the horizon
-        const flow = Math.sin(px * 0.05 * (1.5 - p) + y * 0.9 - t * 3);
-        const spark = hash(x, Math.floor(y - t * (3 + 6 * p)), 7);
-        const glare = p < 0.35 && Math.abs(px - L.sx) < L.sr * 0.45 * (1 - p) && hash(x, y, Math.floor(t * 6)) < 0.35;
-        if (spark < 0.035 || glare) put(x, y, spark < 0.015 ? '✦' : glare ? '-' : '•', 'white');
-        else if (spark < 0.085) put(x, y, '·', 'white');
-        else if (flow > 0.55) put(x, y, '~', 'bluePale');
-        else if (flow < -0.75) put(x, y, '-', 'blueLight');
-        continue;
-      }
-      if (off < hw + cw * 0.8) continue; // a clean bank
-
-      const wind = Math.sin(px * 0.01 - t * 1.4 + py * 0.004) * 0.7 + Math.sin(px * 0.034 - t * 2.2) * 0.3;
-      const r = hash(x, y, 1);
-
-      if (hash(x, y, 4) < 0.022 * (0.35 + p)) {
-        daisies.push([x, y, wind]);
-        continue;
-      }
-
-      if (r < 0.26 + 0.5 * p) {
-        let glyph: string;
-        if (p < 0.12) glyph = r < 0.2 ? '.' : ',';
-        else if (hash(x, y, 2) < 0.28) glyph = wind > 0 ? ',' : "'";
-        else glyph = wind > 0.42 ? '/' : wind < -0.42 ? '\\' : '|';
-        put(x, y, glyph, hash(x, y, 3) < 0.45 + 0.2 * p ? 'greenLight' : 'greenDark');
-      }
-    }
-  }
-
-  // daisies nod in the same wind as the grass
-  for (const [x, y, wind] of daisies) {
-    const near = (y * ch - L.hy) / (H - L.hy) > 0.45;
-    const glyph = Math.abs(wind) > 0.6 ? '*' : near ? '❀' : '✿';
-    put(x, y, glyph, hash(x, y, 5) < 0.2 ? 'cream' : 'white');
-  }
 }
 
 export const landscape: Record<string, Scene> = {
