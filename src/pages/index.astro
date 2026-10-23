@@ -1,133 +1,92 @@
 ---
 import Base from '../layouts/Base.astro';
-import Ascii from '../components/Ascii.astro';
-import { site } from '../data/site';
+import Arrow from '../components/Arrow.astro';
+import Rider from '../components/Rider.astro';
+import { about, work } from '../data/site';
 ---
 
-<Base home>
-  <main class="poster">
-    <div class="scene"><Ascii scene="poster" cell="auto" /></div>
-    <div class="field">
-      <nav aria-label="Primary">
-        <a href="/about">About</a>
-        <a href="/work">Work</a>
-        <a href="/pictures">Pictures</a>
-        <a href="/blog">Blog</a>
-      </nav>
-      <a class="mail" href="mailto:hello@serkan.works">hello@serkan.works</a>
+<Base>
+  <p class="is"><span class="g">likes</span> hardware <span class="g">&amp;</span> software</p>
+  <div class="text">
+    <div class="about">
+      {about.map((p) => <p set:html={p.replaceAll('<a ', '<a class="link" ')} />)}
     </div>
 
-    <h1 class="name">Serkan<br />Ağdaş</h1>
-    <div class="side">
-      <p class="role">Software engineer<br />{site.location}</p>
-      <p class="motto"><em>Things usually work out.</em><br />I like to make sure.</p>
+    <div class="made">
+      <p>Some things I’ve made include:</p>
+      {
+        work.map((w) => (
+          <a class="pair" href={`/work/${w.slug}`}>
+            <div class="name">
+              {w.title} <Arrow />
+            </div>
+            <div>
+              <p>{w.line}</p>
+              <aside>
+                {w.context}, {w.year}
+              </aside>
+            </div>
+          </a>
+        ))
+      }
     </div>
-  </main>
+
+    <p>I write about the things I build, break and fix on <a href="/blog" class="link">my blog</a>.</p>
+    <Rider />
+  </div>
 </Base>
 
 <style>
-  :global(body.home) {
-    height: 100svh;
-    overflow: hidden;
+  .is {
+    margin-bottom: 2rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 300;
+    color: var(--black);
   }
-
-  .poster {
-    --h: 30%; /* height of the field below the horizon */
-    --s: min(64vh, 46vw); /* sun */
-    position: relative;
-    height: 100svh;
-    overflow: hidden;
+  .text {
+    display: grid;
+    gap: 2rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
-
-  .scene {
-    position: absolute;
-    inset: 0;
+  .about {
+    display: grid;
+    gap: 1rem;
   }
-
-  .field {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: var(--h);
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 20px;
-    padding: 0 var(--pad) clamp(24px, 5vh, 48px);
+  .made {
+    display: grid;
+    gap: 1rem;
+    line-height: 1.375;
   }
-
-  .field nav {
-    display: flex;
-    gap: clamp(20px, 3vw, 40px);
-    font-size: clamp(18px, 1.8vw, 24px);
-    font-weight: 500;
-    letter-spacing: -0.01em;
+  .pair {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0 -0.75rem;
+    padding: 0.5rem 0.75rem;
+    transition: background-color 0.15s;
   }
-
-  .field a {
-    text-decoration: none;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.35);
-    transition: border-color 0.2s;
+  .pair:hover {
+    background: var(--hover);
   }
-
-  .field a:hover {
-    border-color: #fff;
-  }
-
-  .mail {
-    font-size: 15px;
-    opacity: 0.9;
-  }
-
   .name {
-    position: absolute;
-    left: var(--pad);
-    top: clamp(28px, 7vh, 72px);
-    margin: 0;
-    font-weight: 600;
-    font-size: clamp(60px, 11.5vw, 184px);
-    line-height: 0.86;
-    letter-spacing: -0.055em;
+    font-weight: 500;
+    color: var(--black);
   }
-
-  .side {
-    position: absolute;
-    right: var(--pad);
-    top: clamp(34px, 8vh, 84px);
-    width: 240px;
-    font-size: 16px;
-    line-height: 1.45;
+  aside {
+    margin-top: 0.125rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: var(--soft);
   }
-
-  .role {
-    color: var(--ink-soft);
-  }
-
-  .motto em {
-    font: italic 400 26px/1.1 var(--serif);
-    color: var(--ink);
-  }
-
-  .motto {
-    color: var(--ink-soft);
-  }
-
-  @media (max-width: 720px) {
-    .poster {
-      --h: 26%;
-      --s: 78vw;
-    }
-    .side {
-      position: absolute;
-      left: var(--pad);
-      right: auto;
-      top: calc(clamp(28px, 7vh, 72px) + 2 * 0.86 * clamp(60px, 11.5vw, 184px) + 28px);
-    }
-    .mail {
-      display: none;
+  @media (min-width: 640px) {
+    .pair {
+      grid-template-columns: 1fr 2fr;
     }
   }
-
+  @media (max-width: 420px) {
+    .is {
+      margin-top: -2.5rem;
+    }
+  }
 </style>

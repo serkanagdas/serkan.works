@@ -1,23 +1,21 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
-import Ascii from '../components/Ascii.astro';
 import { site, links } from '../data/site';
 
 interface Props {
-  title?: string;
+  title?: string; // shown after the name in the header
+  doc?: string; // the browser tab title, when it differs
   description?: string;
-  home?: boolean;
 }
 
-const { title, description = site.description, home = false } = Astro.props;
-const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}, ${site.location}`;
+const { title, doc = title, description = site.description } = Astro.props;
+const fullTitle = doc ? `${doc} — ${site.name}` : site.name;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const path = Astro.url.pathname;
 const nav = [
-  { href: '/about', label: 'About' },
-  { href: '/work', label: 'Work' },
-  { href: '/pictures', label: 'Pictures' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/pictures', label: 'pictures' },
+  { href: '/blog', label: 'blog' },
 ];
 const person = {
   '@context': 'https://schema.org',
@@ -29,10 +27,22 @@ const person = {
   homeLocation: { '@type': 'Place', name: 'İstanbul, Türkiye' },
   sameAs: links.filter((l) => l.href.startsWith('https')).map((l) => l.href),
 };
+
+// The page body slides out and back in; the header stays put.
+const fly = {
+  forwards: {
+    old: { name: 'flyOut', duration: '350ms', easing: 'ease', fillMode: 'forwards' },
+    new: { name: 'flyIn', duration: '350ms', easing: 'ease', delay: '350ms', fillMode: 'backwards' },
+  },
+  backwards: {
+    old: { name: 'flyOut', duration: '350ms', easing: 'ease', fillMode: 'forwards' },
+    new: { name: 'flyIn', duration: '350ms', easing: 'ease', delay: '350ms', fillMode: 'backwards' },
+  },
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -49,95 +59,160 @@ const person = {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="Plain-text summary for language models" />
     <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Blog — Serkan Ağdaş" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <ClientRouter />
   </head>
-  <body class:list={{ home }}>
-    {
-      !home && (
-        <header class="bar frame">
-          <a class="name" href="/">{site.name}</a>
-          <nav aria-label="Primary">
-            {nav.map((n) => (
-              <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>
-                {n.label}
+  <body>
+    <header class="layout">
+      <h1>
+        <a href="/">{site.name}</a>
+        {
+          title && (
+            <span class="page-title">
+              <span class="g">—</span> {title}
+            </span>
+          )
+        }
+      </h1>
+      <nav aria-label="Primary">
+        {
+          nav.map((n) => (
+            <a href={n.href} class:list={{ on: path.startsWith(n.href) }}>
+              {n.label}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+
+    <div class="layout body" transition:animate={fly}>
+      <slot />
+      <footer>
+        {
+          links.map((l) => (
+            <div class="row">
+              <span>{l.label}</span>
+              <hr />
+              <a class="link" href={l.href} rel={l.href.startsWith('http') ? 'me' : undefined}>
+                {l.href.startsWith('http') ? `@${l.value}` : l.value}
               </a>
-            ))}
-          </nav>
-        </header>
-      )
-    }
-    <slot />
-    {
-      !home && (
-        <footer class="end" aria-hidden="true">
-          <Ascii scene="meadow" cell={7} />
-        </footer>
-      )
-    }
+            </div>
+          ))
+        }
+      </footer>
+    </div>
   </body>
 </html>
 
 <style>
-  body:not(.home) {
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .bar {
+  header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding-top: 28px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--rule);
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
   }
 
-  .name {
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    text-decoration: none;
+  h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .page-title {
+    font-weight: 300;
   }
 
   nav {
     display: flex;
-    gap: 28px;
-    font-size: 15px;
+    gap: 1.5rem;
+    padding: 0.125rem 0;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    color: var(--soft);
   }
 
   nav a {
-    text-decoration: none;
-    color: var(--ink-soft);
-    padding-bottom: 3px;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
+    transition: color 0.15s;
   }
 
   nav a:hover,
-  nav a[aria-current='page'] {
-    color: var(--ink);
-    border-color: var(--green);
+  nav a.on {
+    color: var(--black);
   }
 
-  .end {
-    margin-top: auto;
-    padding-top: 120px;
+  .body {
+    line-height: 1.25;
   }
 
-  .end :global(canvas) {
-    height: 210px;
+  footer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 
-  @media (max-width: 520px) {
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .row span {
+    color: var(--soft);
+  }
+
+  .row hr {
+    flex: 1;
+    margin-top: 0.125rem;
+    border-top-style: dotted;
+  }
+
+  @media (min-width: 640px) {
+    header {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .page-title {
+      display: block;
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+    }
+    .page-title .g {
+      display: none;
+    }
+  }
+
+  @media (max-width: 420px) {
     nav {
-      gap: 16px;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0;
+    }
+  }
+
+  @keyframes -global-flyIn {
+    from {
+      transform: translateX(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  @keyframes -global-flyOut {
+    from {
+      transform: none;
+      opacity: 1;
+    }
+    to {
+      transform: translateY(5px);
+      opacity: 0;
     }
   }
 </style>

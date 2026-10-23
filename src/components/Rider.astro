@@ -1,0 +1,37 @@
+---
+// A small ASCII cyclist whose wheels turn. Static under reduced motion.
+---
+
+<pre class="rider" aria-label="A small ASCII drawing of someone riding a bicycle" role="img">      __o
+    _ \&lt;,_
+   (<b>|</b>)/ (<b>|</b>)
+~~~~~~~~~~~~~~~</pre>
+
+<script>
+  const spokes = ['|', '/', '–', '\\'];
+  let timer = 0;
+  function spin() {
+    clearInterval(timer);
+    const el = document.querySelector('.rider');
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const hubs = el.querySelectorAll('b');
+    let i = 0;
+    timer = window.setInterval(() => {
+      i = (i + 1) % spokes.length;
+      hubs.forEach((h) => (h.textContent = spokes[i]));
+    }, 140);
+  }
+  document.addEventListener('astro:page-load', spin);
+</script>
+
+<style>
+  .rider {
+    width: max-content;
+    margin: 0 auto;
+    font: 1.125rem/1.3 var(--mono);
+    color: var(--soft);
+  }
+  .rider b {
+    font-weight: inherit;
+  }
+</style>

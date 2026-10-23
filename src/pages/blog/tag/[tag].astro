@@ -11,8 +11,6 @@ const { tag } = Astro.params;
 const tagged = (await posts()).filter((p) => p.data.tag === tag);
 ---
 
-<Base title={`#${tag}`} description={`Blog posts tagged ${tag}.`}>
-  <main class="frame">
-    <BlogIndex posts={tagged} active={tag} />
-  </main>
+<Base title="Blog" description={`Blog posts tagged ${tag}.`}>
+  <BlogIndex posts={tagged} active={tag} />
 </Base>

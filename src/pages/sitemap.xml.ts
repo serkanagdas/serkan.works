@@ -5,8 +5,6 @@ import { posts, tags } from '../lib/blog';
 export const GET: APIRoute = async () => {
   const pages = [
     '/',
-    '/about',
-    '/work',
     '/pictures',
     '/blog',
     ...work.map((w) => `/work/${w.slug}`),

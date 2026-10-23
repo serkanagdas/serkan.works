@@ -38,8 +38,6 @@ export const GET: APIRoute = async () => {
     '## Pages',
     '',
     `- [Home](${site.url}/)`,
-    `- [About](${site.url}/about)`,
-    `- [Work](${site.url}/work)`,
     `- [Pictures](${site.url}/pictures): photos of hobbies`,
     `- [Blog](${site.url}/blog): a log of things built and learned ([RSS](${site.url}/rss.xml))`,
     '',

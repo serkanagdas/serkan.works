@@ -4,6 +4,6 @@ export default defineConfig({
   site: 'https://serkan.works',
   trailingSlash: 'ignore',
   markdown: {
-    shikiConfig: { theme: 'github-light' },
+    shikiConfig: { theme: 'github-dark' },
   },
 });

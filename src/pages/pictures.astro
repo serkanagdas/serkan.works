@@ -1,84 +1,64 @@
 ---
 import Base from '../layouts/Base.astro';
-import Ascii from '../components/Ascii.astro';
 import { pictures } from '../data/pictures';
 ---
 
 <Base title="Pictures" description="Photos from the hobbies of Serkan Ağdaş.">
-  <main class="frame">
-    <div class="head">
-      <p class="kicker">Pictures</p>
-      <h1 class="display">With the <em>screen off.</em></h1>
-    </div>
-    <ul class="grid">
+  <section class="page">
+    <p class="head">With the screen off</p>
+    <div class="list">
       {
-        pictures.map((p, i) => (
-          <li>
-            <figure>
-              <div class:list={['plate', i % 3 === 1 ? 'g' : 'b']}>
-                {p.src ? <img src={p.src} alt={p.alt ?? p.caption} loading="lazy" decoding="async" /> : <Ascii scene={p.title} />}
-              </div>
-              <figcaption>
-                <strong>{p.title}</strong>
-                <span>{p.caption}</span>
-              </figcaption>
-            </figure>
-          </li>
+        pictures.map((p) => (
+          <figure>
+            {p.src && <img src={p.src} alt={p.alt ?? p.caption} loading="lazy" decoding="async" />}
+            <figcaption>
+              <span class="title">{p.title}</span>
+              <span class="caption">{p.caption}</span>
+            </figcaption>
+          </figure>
         ))
       }
-    </ul>
-  </main>
+    </div>
+    <p class="note">Photos are on their way. Until then, the captions will have to do.</p>
+  </section>
 </Base>
 
 <style>
-  .head {
-    padding-top: 80px;
-    margin-bottom: 64px;
+  .page {
+    padding: 3rem 0;
   }
-  .grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .head {
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+  }
+  .list {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 48px 32px;
+    gap: 0.5rem;
   }
   figure {
-    margin: 0;
-  }
-  .plate {
-    aspect-ratio: 5 / 4;
-    overflow: hidden;
-  }
-  .plate.b {
-    background: var(--blue-tint);
-  }
-  .plate.g {
-    background: var(--green-tint);
+    margin: 0 -0.75rem;
+    padding: 0.75rem;
   }
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.75rem;
   }
   figcaption {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 14px;
-    font-size: 15px;
+    display: grid;
+    gap: 0.125rem;
   }
-  figcaption strong {
-    font-weight: 600;
+  .title {
+    font-size: 1.125rem;
+    color: var(--black);
   }
-  figcaption span {
-    color: var(--ink-soft);
-    text-align: right;
+  .caption {
+    color: var(--soft);
   }
-  @media (max-width: 640px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
+  .note {
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: var(--faint);
   }
 </style>
