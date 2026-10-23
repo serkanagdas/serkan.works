@@ -1,51 +1,18 @@
 :root {
-  --bg: #f3f5f9;
-  --bg-raised: #ffffff;
-  --ink: #0c1424;
-  --ink-2: #4b5669;
-  --ink-3: #8790a1;
-  --line: rgba(12, 20, 36, 0.09);
-  --blue: #0a66ff;
-  --blue-ink: #0052d6;
-  --blue-wash: rgba(10, 102, 255, 0.07);
-  --ascii: rgba(10, 102, 255, 0.5);
-  --ascii-strong: #0a5ae6;
-
-  --glass-fill: rgba(255, 255, 255, 0.42);
-  --glass-edge: rgba(255, 255, 255, 0.85);
-  --glass-shade: rgba(12, 40, 100, 0.10);
-  --glass-shadow: 0 1px 1px rgba(12, 20, 36, 0.04), 0 10px 30px -8px rgba(10, 50, 120, 0.18);
-
-  --sans: 'Geist', -apple-system, 'SF Pro Text', system-ui, sans-serif;
-  --mono: 'Geist Mono', ui-monospace, 'SF Mono', 'JetBrains Mono', monospace;
-
-  --col: 640px;
-  --wide: 960px;
-  --gutter: 20px;
-
-  color-scheme: light dark;
-  interpolate-size: allow-keywords;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #05090f;
-    --bg-raised: #0b111c;
-    --ink: #e6ecf7;
-    --ink-2: #9aa6ba;
-    --ink-3: #5f6a7d;
-    --line: rgba(230, 236, 247, 0.09);
-    --blue: #4d9bff;
-    --blue-ink: #7ab4ff;
-    --blue-wash: rgba(77, 155, 255, 0.09);
-    --ascii: rgba(77, 155, 255, 0.46);
-    --ascii-strong: #6aaeff;
-
-    --glass-fill: rgba(22, 32, 52, 0.42);
-    --glass-edge: rgba(255, 255, 255, 0.16);
-    --glass-shade: rgba(0, 0, 0, 0.35);
-    --glass-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 12px 34px -10px rgba(0, 0, 0, 0.7);
-  }
+  --white: #ffffff;
+  --ink: #0d1a2b;
+  --ink-soft: #4c5a6b;
+  --ink-faint: #9aa5b1;
+  --rule: #e6eaef;
+  --blue: #1d56d6;
+  --blue-tint: #edf2fd;
+  --green: #229a63;
+  --green-tint: #eaf6f0;
+  --sans: 'Instrument Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --max: 1200px;
+  --pad: clamp(20px, 4vw, 48px);
+  color-scheme: light;
 }
 
 *,
@@ -56,19 +23,14 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  scroll-behavior: smooth;
-  scroll-padding-top: 96px;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--white);
   color: var(--ink);
-  font: 400 16.5px/1.65 var(--sans);
-  font-feature-settings: 'ss01', 'cv11';
-  overflow-x: hidden;
+  font: 400 17px/1.6 var(--sans);
 }
 
 ::selection {
@@ -78,112 +40,43 @@ body {
 
 a {
   color: inherit;
-  text-decoration-line: underline;
-  text-decoration-color: color-mix(in srgb, var(--blue) 45%, transparent);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  transition: color 0.15s, text-decoration-color 0.15s;
-}
-
-a:hover {
-  color: var(--blue-ink);
-  text-decoration-color: var(--blue);
 }
 
 :focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
 p {
   margin: 0 0 1em;
 }
 
-.col {
-  width: min(var(--col), 100% - 2 * var(--gutter));
+.frame {
+  width: 100%;
+  max-width: var(--max);
   margin-inline: auto;
+  padding-inline: var(--pad);
 }
 
-.wide {
-  width: min(var(--wide), 100% - 2 * var(--gutter));
-  margin-inline: auto;
+.kicker {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 0 0 18px;
 }
 
-.mono {
-  font-family: var(--mono);
+.display {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(48px, 8vw, 104px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
 }
 
-.muted {
-  color: var(--ink-2);
-}
-
-/* ── section label: `about ─────────────` ── */
-.label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 22px;
-  font: 500 12.5px/1 var(--mono);
-  letter-spacing: 0.02em;
-  color: var(--ink-3);
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.label::after {
-  content: '────────────────────────────────────────────────────────────────────────────────────────────────';
-  color: var(--line);
-  color: color-mix(in srgb, var(--ink-3) 35%, transparent);
-  overflow: hidden;
-  flex: 1;
-}
-
-section {
-  margin-block: 72px;
-}
-
-/* ── liquid glass ──
-   Base recipe works everywhere (blur + saturation + a lit rim).
-   Chromium additionally gets real refraction via an SVG filter, see Glass.astro. */
-.glass {
-  position: relative;
-  background: var(--glass-fill);
-  -webkit-backdrop-filter: blur(14px) saturate(1.8);
-  backdrop-filter: blur(14px) saturate(1.8);
-  border: 1px solid transparent;
-  box-shadow:
-    inset 0 1px 0.5px var(--glass-edge),
-    inset 0 -1px 1px var(--glass-shade),
-    inset 0 0 0 1px color-mix(in srgb, var(--glass-edge) 40%, transparent),
-    var(--glass-shadow);
-}
-
-.glass::before {
-  /* specular sheen along the top edge */
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--glass-edge) 55%, transparent) 0%,
-    transparent 38%,
-    transparent 75%,
-    color-mix(in srgb, var(--glass-edge) 18%, transparent) 100%
-  );
-  mix-blend-mode: soft-light;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
+.display em {
+  font: italic 400 1.04em/1 var(--serif);
+  letter-spacing: -0.02em;
+  color: var(--blue);
 }

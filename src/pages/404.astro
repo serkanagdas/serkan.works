@@ -1,29 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import { wordmark } from '../lib/wordmark';
-const art = wordmark('404');
 ---
 
-<Base title="Not found" description="This page does not exist.">
-  <section class="col lost">
-    <pre aria-hidden="true">{art}</pre>
-    <h1>Nothing at this address.</h1>
-    <p class="muted">It may have moved, or it never existed. <a href="/">Back to the front page</a>.</p>
-  </section>
+<Base title="Not found">
+  <main class="frame" style="padding-top:80px">
+    <p class="kicker">404</p>
+    <h1 class="display">Nothing here, <em>yet.</em></h1>
+    <p style="margin-top:28px;font-size:19px">The page may have moved. <a href="/">Back to the front page</a>.</p>
+  </main>
 </Base>
-
-<style>
-  .lost {
-    margin-top: 96px;
-  }
-  pre {
-    margin: 0 0 28px;
-    font: 14px/1 ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace;
-    color: var(--ascii-strong);
-  }
-  h1 {
-    margin: 0 0 8px;
-    font: 600 26px/1.2 var(--sans);
-    letter-spacing: -0.02em;
-  }
-</style>

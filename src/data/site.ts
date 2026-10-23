@@ -1,94 +1,139 @@
-// Single source of truth for the copy. The pages, llms.txt and the
-// sitemap all read from here, so edit once and everything stays in sync.
+// All of the site's words live here. Pages, /llms.txt and the sitemap read from this file.
 
 export const site = {
   name: 'Serkan Ağdaş',
   domain: 'serkan.works',
   url: 'https://serkan.works',
   location: 'İstanbul',
-  timezone: 'Europe/Istanbul',
   role: 'Software engineer',
-  tagline:
-    'Software engineer in İstanbul. I write the code, set up the machines it runs on, and lately teach agents to take the night shift.',
   description:
-    'Serkan Ağdaş — software engineer in İstanbul working on applied AI and full-stack development. Agentic prospecting infrastructure at E Dijital Bilişim Hizmetleri.',
+    'Serkan Ağdaş is a software engineer in İstanbul working on applied AI and full-stack development, currently building agentic prospecting infrastructure at E Dijital Bilişim Hizmetleri.',
 };
 
 export const about = [
-  'Software engineer based in İstanbul, currently building agentic AI-based prospecting infrastructure at <a href="https://edoor.com.tr" rel="noopener">E Dijital Bilişim Hizmetleri</a>.',
-  'Lately, I’ve been focused on applied AI and full-stack development. Most of my projects start the same way: something around me is slow, manual or noisy, and I can’t leave it alone. The fix usually takes a bit of code, a bit of hardware and, more and more, an agent that keeps at it after I’ve logged off.',
+  'Software engineer based in İstanbul, currently building agentic AI-based prospecting infrastructure at <a href="https://edoor.com.tr">E Dijital Bilişim Hizmetleri</a>.',
+  'Lately, I’ve been focused on applied AI and full-stack development. I tend to think most problems are unfinished projects: give them a weekend, a bit of code and sometimes a screwdriver, and they come around. More and more, the last piece is an agent that keeps going after I’ve logged off.',
   'Off the clock, I’m into video games, cycling, kickboxing and Lego. The <a href="/pictures">pictures page</a> has some of the better photos of my hobbies. Feel free to check them out.',
 ];
 
-export const now = [
-  'Building prospecting agents at E Dijital.',
-  'Wiring CI and deploys into the office server.',
-  'Kickboxing on Mondays and Wednesdays.',
-];
-
 export type Work = {
+  slug: string;
   title: string;
   context: string;
+  year: string;
   line: string;
-  body: string;
+  body: string[];
+  notes: string[];
   stack: string[];
 };
 
 export const work: Work[] = [
   {
-    title: 'Prospecting infrastructure',
-    context: 'E Dijital · now',
+    slug: 'prospecting',
+    title: 'Prospecting',
+    context: 'E Dijital',
+    year: 'now',
     line: 'Agents for the slowest part of sales.',
-    body: 'Agentic systems that find the right companies, read up on them and hand people a head start instead of a blank spreadsheet. Most of my working hours go here right now.',
-    stack: ['agents', 'llms', 'full-stack'],
+    body: [
+      'Before anyone sells anything, someone has to find the right companies and learn enough about them to start a good conversation. It is slow, careful work, and it is exactly the kind of work agents are getting good at.',
+      'I’m building the infrastructure that lets them do it well: finding, reading, qualifying, and handing people a head start instead of a blank spreadsheet.',
+    ],
+    notes: ['Agentic pipelines from search to a qualified lead.', 'Built to be checked by people, not to replace them.'],
+    stack: ['Agents', 'LLMs', 'Full-stack'],
   },
   {
+    slug: 'pitchdeck',
     title: 'Pitchdeck',
-    context: 'side project',
+    context: 'Side project',
+    year: '2026',
     line: 'Booking software for five-a-side football pitches.',
-    body: 'Started as a favour for someone who had just taken over a pitch and was still taking bookings over WhatsApp. It grew into a multi-tenant product: double-booking is ruled out by the database itself, plus a CRM, a cash ledger, roles, an MCP server and an assistant that flags regulars who stopped showing up. 761 tests. Most of the code was written by agents working through issues; I wrote the plans and reviewed every merge.',
-    stack: ['next.js', 'typescript', 'drizzle', 'postgres', 'better-auth', 'mcp'],
+    body: [
+      'It started as a favour for someone who had just taken over a pitch and was still taking bookings over WhatsApp. It grew into a proper multi-tenant product, the kind a second and third pitch could sign up for tomorrow.',
+      'Most of the code was written by agents working through issues. I wrote the plans, set the rules and reviewed every merge.',
+    ],
+    notes: [
+      'Double-booking isn’t unlikely, it’s impossible: the database itself refuses overlapping slots.',
+      'Every write carries its tenant, every read is scoped to it.',
+      'A CRM, a cash ledger, roles, recurring slots and a three-step booking flow.',
+      'An MCP server and an assistant that notices regulars who stopped showing up.',
+      'Ten phases, 761 tests green at the end.',
+    ],
+    stack: ['Next.js', 'TypeScript', 'Drizzle', 'PostgreSQL', 'Better Auth', 'MCP'],
   },
   {
+    slug: 'eser-tarama',
     title: 'Eser Tarama',
-    context: 'client work',
+    context: 'Client work',
+    year: '2026',
     line: 'A digitisation line for rare manuscripts.',
-    body: 'Scans arrive from several sites over connections nobody would call reliable, so uploads are chunked, checksummed and resumable. Reviewers accept or reject page by page, every action lands in an append-only log, and approved batches leave with a sha256 manifest. Shipped as v1 with a full three-person run-through tested end to end.',
-    stack: ['laravel', 'postgres', 'blade', 'tailwind', 'queues'],
+    body: [
+      'Old books are scanned in several places, page by page, and every page matters. The software’s job is to make sure none of them get lost on the way to the archive.',
+      'Uploads survive bad connections, reviewers judge each page on its own, and every step leaves a trace someone can check years later.',
+    ],
+    notes: [
+      'Chunked uploads that resume where they stopped; a damaged piece is simply sent again.',
+      'Page-level review, so one bad page never holds back a whole volume.',
+      'An append-only log of every decision.',
+      'Approved batches leave with a sha256 manifest.',
+    ],
+    stack: ['Laravel', 'PostgreSQL', 'Blade', 'Tailwind'],
   },
   {
+    slug: 'e-door',
     title: 'E-DOOR',
-    context: 'client work',
-    line: 'Archive and conservation management for a manuscript institution.',
-    body: 'Modules for conservation tracking, staffing and HR, and training programmes on a large, server-rendered PHP system used by libraries across Türkiye. Much of the job is making careful changes in places where one wrong line reaches every library at once.',
-    stack: ['php', 'postgres', 'jquery', 'tailwind'],
+    context: 'Client work',
+    year: '2026',
+    line: 'Archive and conservation management for manuscript libraries.',
+    body: [
+      'A large, long-lived system that libraries across Türkiye use every day to track their collections, restoration work and staff.',
+      'I build new modules and improve old ones, in a codebase where a careful change reaches every library at once. That is the fun part.',
+    ],
+    notes: [
+      'Conservation dashboards where each library sees its own work.',
+      'A staffing and HR module, built while the schema was still taking shape.',
+      'Training and events modules for the institution’s programmes.',
+    ],
+    stack: ['PHP', 'PostgreSQL', 'jQuery', 'Tailwind'],
   },
   {
+    slug: 'ajana-gonder',
     title: 'ajana-gönder',
-    context: 'internal tool',
-    line: 'Put a label on an issue, walk away.',
-    body: 'Tag a Linear issue and a coordinator agent picks it up within the hour, hands it to a coding agent that opens a branch and a pull request, never main, and reports back in Turkish. A Telegram digest goes out every fifteen minutes so nobody has to go looking.',
-    stack: ['hermes', 'openhands', 'linear', 'telegram'],
+    context: 'Internal tool',
+    year: '2026',
+    line: 'Put a label on an issue, then go have lunch.',
+    body: [
+      'The name means “send it to the agent”. Anyone on the team can tag an issue, and the work starts without anyone opening a terminal.',
+      'A coordinator agent picks it up within the hour, a coding agent does the work on its own branch, and a report comes back in Turkish, written for the person who asked.',
+    ],
+    notes: [
+      'Issue to branch to pull request, never straight to main.',
+      'Reports land on the issue, in plain Turkish.',
+      'A short Telegram digest every fifteen minutes.',
+    ],
+    stack: ['Hermes', 'OpenHands', 'Linear', 'Telegram'],
   },
   {
+    slug: 'the-rack',
     title: 'The rack',
-    context: 'infra',
-    line: 'Office server, home server, and a laptop that never sleeps.',
-    body: 'An office server split by blast radius: what is public, what is private, and where the agents are allowed to misbehave. GitLab, a model gateway and the coding agents live behind Tailscale with nothing exposed that does not need to be. At home, a retired 2014 laptop runs the coordinator agent around the clock.',
-    stack: ['docker', 'proxmox', 'tailscale', 'gitlab', 'litellm'],
+    context: 'Infrastructure',
+    year: '2026',
+    line: 'An office server, a home server and a laptop that never sleeps.',
+    body: [
+      'Everything above runs somewhere, and I like knowing exactly where. The office server is split by how far trouble could spread: what is public, what is private, and where the agents are free to experiment.',
+      'At home, a 2014 laptop that was about to be retired now runs the coordinator agent around the clock. It seems happier for it.',
+    ],
+    notes: [
+      'Public, private and agent zones, each with its own walls.',
+      'Source code and business data reachable only over Tailscale.',
+      'Git hosting, a model gateway and coding agents, all self-hosted.',
+    ],
+    stack: ['Docker', 'Proxmox', 'Tailscale', 'GitLab', 'LiteLLM'],
   },
-];
-
-export const smaller = [
-  'Debloated a 2 GB Mi Box over ADB. 28 packages off, every one reversible, RAM measured before and after.',
-  'A teardown of a legacy WebForms attendance system, written up as a blueprint for rebuilding it properly.',
-  'A bilingual company site in Astro, plus a Remotion pipeline that renders the product videos.',
-  'Dedicated game servers, whenever friends want to play something that needs one.',
 ];
 
 export const links = [
-  { label: 'email', value: 'hello@serkan.works', href: 'mailto:hello@serkan.works' },
-  { label: 'github', value: 'serkanagdas', href: 'https://github.com/serkanagdas' },
-  { label: 'linkedin', value: 'in/serkanagdas', href: 'https://www.linkedin.com/in/serkanagdas' },
-  { label: 'instagram', value: 'sekoinx', href: 'https://www.instagram.com/sekoinx' },
+  { label: 'Email', value: 'hello@serkan.works', href: 'mailto:hello@serkan.works' },
+  { label: 'GitHub', value: 'serkanagdas', href: 'https://github.com/serkanagdas' },
+  { label: 'LinkedIn', value: 'serkanagdas', href: 'https://www.linkedin.com/in/serkanagdas' },
+  { label: 'Instagram', value: 'sekoinx', href: 'https://www.instagram.com/sekoinx' },
 ];
