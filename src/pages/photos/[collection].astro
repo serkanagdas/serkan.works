@@ -1,0 +1,73 @@
+---
+import { photoCollections } from '../../photos/collections';
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  return photoCollections.map((c) => ({ params: { collection: c.id }, props: { coll: c } }));
+}
+
+const { coll } = Astro.props;
+---
+
+<Layout
+  title={`${coll.title} — Fotoğraflar — serkan.works`}
+  description={coll.description}
+  navCurrent="photos"
+>
+  <div class="page-head wrap">
+    <a class="back-link" href="/photos">← Koleksiyonlar</a>
+    <h1>{coll.title}</h1>
+    <p class="lede">{coll.description}</p>
+  </div>
+
+  <section class="wrap" style="padding-top: 0;">
+    {
+      coll.photos.length === 0 ? (
+        <div class="empty">
+          <b>Bu koleksiyon henüz boş</b>
+          Fotoğraf eklemek için dosyayı <code>public/photos/{coll.id}/</code> altına at,
+          <code>src/photos/collections.ts</code> içine satır olarak ekle — bu kadar.
+        </div>
+      ) : (
+        <div class="photo-grid">
+          {coll.photos.map((p) => (
+            <button
+              class="photo-item"
+              data-lb-src={p.src}
+              data-lb-caption={p.caption || p.alt}
+              aria-label={`${p.alt} — büyüt`}
+            >
+              <img src={p.src} alt={p.alt} loading="lazy" />
+              {p.caption && <span class="photo-cap">{p.caption}</span>}
+            </button>
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<script>
+  // native <dialog> lightbox — kütüphane yok
+  const dlg = document.createElement('dialog');
+  dlg.className = 'lightbox';
+  dlg.innerHTML = '<img alt="" /><p></p>';
+  document.body.appendChild(dlg);
+
+  dlg.addEventListener('click', () => dlg.close());
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && dlg.open) dlg.close();
+  });
+
+  document.querySelectorAll('.photo-item').forEach((el) => {
+    el.addEventListener('click', () => {
+      const img = dlg.querySelector('img');
+      const cap = dlg.querySelector('p');
+      if (!img || !cap) return;
+      img.src = el.getAttribute('data-lb-src') || '';
+      img.alt = el.getAttribute('data-lb-caption') || '';
+      cap.textContent = el.getAttribute('data-lb-caption') || '';
+      dlg.showModal();
+    });
+  });
+</script>

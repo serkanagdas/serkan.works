@@ -1,0 +1,72 @@
+---
+interface Props {
+  variant?: 'home' | 'page'; // home: çapa linkleri, page: gerçek sayfa linkleri
+  current?: string;
+}
+const { variant = 'page', current = '' } = Astro.props;
+
+const links =
+  variant === 'home'
+    ? [
+        { href: '#hakkinda', label: 'Hakkında' },
+        { href: '#otomasyon', label: 'Otomasyon' },
+        { href: '#isler', label: 'İşler' },
+        { href: '#fotolar', label: 'Fotoğraflar' },
+        { href: '#notlar', label: 'Notlar' },
+        { href: '#stack', label: 'Stack' },
+        { href: '#iletisim', label: 'İletişim' },
+      ]
+    : [
+        { href: '/#hakkinda', label: 'Hakkında' },
+        { href: '/#isler', label: 'İşler' },
+        { href: '/photos', label: 'Fotoğraflar', match: 'photos' },
+        { href: '/notes', label: 'Notlar', match: 'notes' },
+        { href: '/#stack', label: 'Stack' },
+        { href: '/#iletisim', label: 'İletişim' },
+      ];
+---
+
+<nav class="nav" aria-label="Ana menü">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">serkan<em>.works</em></a>
+    <div class="nav-links">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            aria-current={'match' in l && l.match === current ? 'page' : undefined}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Koyu temaya geç">
+      <svg class="icon-light" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"></circle>
+        <path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"></path>
+      </svg>
+      <svg class="icon-dark" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<script>
+  // tema toggle (flash'sız başlangıç layout'taki inline script'te)
+  const root = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    const syncThemeLabel = () => {
+      toggle.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç');
+    };
+    syncThemeLabel();
+    toggle.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch { /* yoksay */ }
+      syncThemeLabel();
+    });
+  }
+</script>

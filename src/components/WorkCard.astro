@@ -1,0 +1,25 @@
+---
+interface Props {
+  href: string;
+  role?: string;
+  title: string;
+  desc: string;
+  cover?: string;
+  cta?: string;
+}
+const { href, role, title, desc, cover, cta = 'Case study' } = Astro.props;
+---
+
+<a href={href} class="work-entry">
+  <div class="work-media">
+    {cover ? <img src={cover} alt="" loading="lazy" /> : <div class="cover-ph">{title.slice(0, 2)}</div>}
+  </div>
+  <div class="work-head">
+    <h3>{title}</h3>
+    {role && <span class="role">{role}</span>}
+  </div>
+  <p>{desc}</p>
+  <span class="go">
+    {cta} <span class="chev" aria-hidden="true">›</span>
+  </span>
+</a>

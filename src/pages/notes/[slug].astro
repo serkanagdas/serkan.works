@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes', ({ data }) => !data.draft);
+  return notes.map((n) => ({ params: { slug: n.id }, props: { note: n } }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+
+const dateFormat = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Layout title={`${note.data.title} — serkan.works`} description={note.data.description}>
+  <article class="wrap">
+    <div class="page-head">
+      <a class="back-link" href="/notes">← Tüm notlar</a>
+      <time
+        datetime={note.data.pubDate.toISOString().slice(0, 10)}
+        style="display: block; font-family: var(--mono); font-size: 13px; color: var(--muted); margin-bottom: 10px;"
+      >
+        {dateFormat.format(note.data.pubDate)}
+      </time>
+      <h1>{note.data.title}</h1>
+      <p class="lede">{note.data.description}</p>
+    </div>
+
+    {
+      note.data.cover && (
+        <div class="cover-frame">
+          <img src={note.data.cover} alt="" />
+        </div>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="case-links">
+      <a class="link-arrow" href="/notes">Tüm notlar <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+  </article>
+</Layout>
