@@ -1,313 +1,132 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import WorkCard from '../components/WorkCard.astro';
-
-const allProjects = (await getCollection('projects')).sort(
-  (a, b) => a.data.order - b.data.order
-);
-const featured = allProjects.filter((p) => p.data.featured);
-const rest = allProjects.filter((p) => !p.data.featured);
-
-const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-const latestNotes = notes.slice(0, 3);
-
-import { photoCollections } from '../photos/collections';
-
-const facts = [
-  { k: 'odak', v: 'Full-stack + altyapı' },
-  { k: 'habitat', v: 'PHP · JS · PostgreSQL · Docker' },
-  { k: 'inanç', v: 'Self-host · yerel LLM' },
-  { k: 'durum', v: 'Yeni projelere açık', ok: true },
-];
-
-const stats = [
-  { n: '7/7', l: 'işçi uptime' },
-  { n: '3', l: 'agent rolü' },
-  { n: 'issue→PR', l: 'tam otomatik akış' },
-];
-
-const stack = [
-  { group: 'Backend', items: ['PHP / Laravel', 'PostgreSQL', 'Python', 'REST & GraphQL', 'Redis / Queue'] },
-  { group: 'Frontend', items: ['JavaScript / TS', 'Astro', 'Tailwind', 'React / Next.js'] },
-  { group: 'Altyapı', items: ['Docker', 'Proxmox', 'Tailscale', 'Caddy / Traefik', 'umbrelOS'] },
-  { group: 'Yapay Zeka', items: ['Ollama', 'OpenHands', 'Hermes Agent', 'Agentik sistemler'] },
-];
-
-const hobbies = [
-  { t: 'Kickboks', w: 'Pzt · Çar' },
-  { t: 'Fitness', w: 'Her gün' },
-  { t: 'Halısaha', w: 'Hafta sonu' },
-  { t: 'Bisiklet', w: 'Sabah' },
-  { t: 'Tenis', w: 'Serbest' },
-  { t: 'Hip-hop', w: '7/24' },
-  { t: 'Saatler', w: 'Koleksiyon' },
-  { t: 'Oyun sunucusu', w: 'Arkadaşlarla' },
-];
-
-const pipeline = [
-  { label: 'Linear issue', sub: 'iş açılır' },
-  { label: 'Hermes', sub: 'koordinasyon · vault hafıza' },
-  { label: 'OpenHands işçi', sub: 'sunucuda 7/7' },
-  { label: 'branch + PR', sub: 'GitHub' },
-  { label: 'inceleme & merge', sub: 'insan onayı' },
-];
-const pipelineItems = pipeline.flatMap((p, i) => (i === 0 ? [p] : [{ arrow: true }, p]));
-
-const agentRoles = [
-  { title: 'Koordinatör — Hermes', desc: 'umbrelOS üzerinde container içinde çalışır. Vault, Linear, GitHub, cron ve sunucu yönetimi ona bağlı. İşi dağıtır, durumu takip eder, raporu tutar.' },
-  { title: 'İşçi — OpenHands', desc: 'Sunucuda 7/7 ayakta. Linear issue gelir, branch açar, kod yazar, PR açar. Arayüz sadece izleme için.' },
-  { title: 'Kokpit — OpenCode + Zed', desc: 'Kendi makinem. Gündüz feature dallarına kod pushlar, plan notlarını yazar, işçilerin çıktısını denetler.' },
-];
-
-const dateFormat = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+import Base from '../layouts/Base.astro';
+import Ascii from '../components/Ascii.astro';
+import { site } from '../data/site';
 ---
 
-<Layout title="Serkan Ağdaş — Yazılım Mühendisi · serkan.works" navVariant="home">
-  <!-- HERO -->
-  <header class="hero wrap">
-    <p class="status"><span class="dot" aria-hidden="true"></span>Yeni projelere açığım</p>
-    <h1>Serkan Ağdaş</h1>
-    <p class="hero-tagline">Yazılım Mühendisi</p>
-    <p class="hero-sub">
-      Full-stack ürün çıkarır, altyapı kurarım — ve şirkette
-      <b>yapay zeka otomasyon sistemi</b> ile 7/7 çalışan bir agent ekosistemi işletiyorum.
-    </p>
-    <div class="hero-ctas">
-      <a href="#isler" class="btn btn-primary">İşlerime bak</a>
-      <a href="#iletisim" class="link-arrow">İletişime geç <span class="chev" aria-hidden="true">›</span></a>
+<Base home>
+  <main class="poster">
+    <div class="scene"><Ascii scene="poster" cell="auto" /></div>
+    <div class="field">
+      <nav aria-label="Primary">
+        <a href="/about">About</a>
+        <a href="/work">Work</a>
+        <a href="/pictures">Pictures</a>
+      </nav>
+      <a class="mail" href="mailto:hello@serkan.works">hello@serkan.works</a>
     </div>
-  </header>
 
-  <!-- HAKKINDA -->
-  <section id="hakkinda" class="wrap reveal" aria-labelledby="hakkinda-title">
-    <div class="section-head">
-      <p class="kicker">hakkında</p>
-      <h2 class="section-title" id="hakkinda-title">Sade, hızlı, çalışan sistemler.</h2>
+    <h1 class="name">Serkan<br />Ağdaş</h1>
+    <div class="side">
+      <p class="role">Software engineer<br />{site.location}</p>
+      <p class="motto"><em>Things usually work out.</em><br />I like to make sure.</p>
     </div>
-    <div class="about-grid">
-      <div class="about-text">
-        <p>
-          2002 doğumlu, yazılım mühendisliğinden yeni mezun bir mühendisim. Günlük işim
-          <b>PHP, PostgreSQL ve JavaScript</b> ile ürün çıkarmak; arka planda
-          <b>Docker, Proxmox ve Tailscale</b> ile altyapı kurmak.
-        </p>
-        <p>
-          Açık kaynak araçlar, yerel LLM'ler ve self-hosting benim için hobiden çok çalışma
-          biçimi. Kodlamaya kokpitte kendi başlıyorum; tekrarlanan işleri
-          <b>agent'lara devrediyorum</b> — son kararı ve kodu hep insan denetliyor.
-        </p>
-        <div class="stats">
-          {stats.map((s) => (
-            <div class="stat">
-              <div class="n">{s.n}</div>
-              <div class="l">{s.l}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <aside aria-label="Künye">
-        <p class="kicker">künye</p>
-        <dl class="facts">
-          {facts.map((f) => (
-            <div class="fact">
-              <dt>{f.k}</dt>
-              <dd class={f.ok ? 'ok' : undefined}>{f.v}</dd>
-            </div>
-          ))}
-        </dl>
-      </aside>
-    </div>
-  </section>
+  </main>
+</Base>
 
-  <!-- OTOMASYON -->
-  <section id="otomasyon" class="band" aria-labelledby="otomasyon-title">
-    <div class="wrap reveal">
-      <div class="section-head">
-        <p class="kicker">otomasyon</p>
-        <h2 class="section-title" id="otomasyon-title">Şirkette bir yapay zeka otomasyon sistemi kurdum.</h2>
-        <p class="section-sub">
-          İş takibinden koda kadar uzanan, kendi kurduğum agent hattı. Linear'da açılan bir iş,
-          koordinatör agent tarafından işçiye dağıtılır; işçi branch açar, PR gönderir; insan
-          onayı olmadan hiçbir şey merge olmaz. Tüm hafıza Obsidian vault'ta kalıcı.
-        </p>
-      </div>
-      <ol class="pipeline" aria-label="İş akışı">
-        {pipelineItems.map((p) => ('arrow' in p
-          ? <li class="arrow" aria-hidden="true">→</li>
-          : <li class="step"><span class="step-label">{p.label}</span><span class="step-sub">{p.sub}</span></li>
-        ))}
-      </ol>
-      <div class="roles">
-        {agentRoles.map((r, i) => (
-          <div class="role">
-            <span class="role-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h4>{r.title}</h4>
-            <p>{r.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- İŞLER: featured case study'ler + tipografik liste -->
-  <section id="isler" class="wrap reveal" aria-labelledby="isler-title">
-    <div class="section-head">
-      <p class="kicker">işler</p>
-      <h2 class="section-title" id="isler-title">Seçili projeler.</h2>
-      <p class="section-sub">Kurumsal sistemlerden kişisel altyapı projelerine — her biri gerçekten çalışan, sürdürülen işler.</p>
-    </div>
-    <div class="work-list">
-      {featured.map((p) => (
-        <WorkCard
-          href={`/projects/${p.id}`}
-          role={p.data.role}
-          title={p.data.title}
-          desc={p.data.description}
-          cover={p.data.cover}
-        />
-      ))}
-    </div>
-    <div class="projects">
-      {rest.map((p) => (
-        <a class="project" href={`/projects/${p.id}`}>
-          <div>
-            <div class="project-head">
-              <h3>{p.data.title}</h3>
-              {p.data.wip && <span class="badge">devam ediyor</span>}
-            </div>
-            <p class="project-role">{p.data.role}</p>
-          </div>
-          <div>
-            <p class="project-desc">{p.data.description}</p>
-            <p class="project-stack">{p.data.stack.join(' · ')}</p>
-          </div>
-        </a>
-      ))}
-      <div class="project">
-        <div>
-          <div class="project-head">
-            <h3>Halısaha Rezervasyon</h3>
-            <span class="badge">fikir aşamasında</span>
-          </div>
-          <p class="project-role">Side project</p>
-        </div>
-        <div>
-          <p class="project-desc">Saha + oyuncu eşleştirme, dinamik takım kurma, rezervasyon akışı. Hafta sonu maç derdine son.</p>
-          <p class="project-stack">Next.js · TypeScript · Drizzle · Netgsm</p>
-        </div>
-      </div>
-    </div>
-    <p style="margin-top: 26px;">
-      <a class="link-arrow" href="/projects">Tüm projeler <span class="chev" aria-hidden="true">›</span></a>
-    </p>
-  </section>
-
-  <!-- FOTOĞRAFLAR -->
-  <section id="fotolar" class="band" aria-labelledby="fotolar-title">
-    <div class="wrap reveal">
-      <div class="section-head">
-        <p class="kicker">fotoğraflar</p>
-        <h2 class="section-title" id="fotolar-title">Ekran dışındaki kareler.</h2>
-        <p class="section-sub">Bisiklet turları, saat kadranları, sunucu odası ve doğa — hobilerin foto hali.</p>
-      </div>
-      <div class="coll-list">
-        {photoCollections.map((c) => (
-          <a class="coll-row" href={`/photos/${c.id}`}>
-            <div class="coll-thumb">
-              {c.cover ? <img src={c.cover} alt="" loading="lazy" /> : <div class="cover-ph" style="aspect-ratio: 4/3; font-size: 20px;">{c.title.slice(0, 2)}</div>}
-            </div>
-            <div class="coll-main">
-              <h2>{c.title}</h2>
-              <p>{c.description}</p>
-            </div>
-            <span class="coll-count">{c.photos.length} fotoğraf</span>
-          </a>
-        ))}
-      </div>
-      <p style="margin-top: 26px;">
-        <a class="link-arrow" href="/photos">Tüm fotoğraf koleksiyonları <span class="chev" aria-hidden="true">›</span></a>
-      </p>
-    </div>
-  </section>
-
-  <!-- NOTLAR -->
-  <section id="notlar" class="wrap reveal" aria-labelledby="notlar-title">
-    <div class="section-head">
-      <p class="kicker">notlar</p>
-      <h2 class="section-title" id="notlar-title">Yaptıkça yazdıklarım.</h2>
-      <p class="section-sub">Kurulum notları, mimari kararlar ve öğrendiklerim — fotoğraflı kısa yazılar.</p>
-    </div>
-    <div class="note-list">
-      {latestNotes.map((n) => (
-        <a class="note-row" href={`/notes/${n.id}`}>
-          <div class="note-thumb">
-            {n.data.cover ? <img src={n.data.cover} alt="" loading="lazy" /> : <div class="cover-ph" style="aspect-ratio: 4/3; font-size: 20px;">✎</div>}
-          </div>
-          <div class="note-main">
-            <time datetime={n.data.pubDate.toISOString().slice(0, 10)}>{dateFormat.format(n.data.pubDate)}</time>
-            <h2>{n.data.title}</h2>
-            <p class="desc">{n.data.description}</p>
-            <p class="tags">{n.data.tags.join(' · ')}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-    <p style="margin-top: 26px;">
-      <a class="link-arrow" href="/notes">Tüm notlar <span class="chev" aria-hidden="true">›</span></a>
-    </p>
-  </section>
-
-  <!-- STACK -->
-  <section id="stack" class="band" aria-labelledby="stack-title">
-    <div class="wrap reveal">
-      <div class="section-head">
-        <p class="kicker">stack</p>
-        <h2 class="section-title" id="stack-title">Ne ile çalışıyorum.</h2>
-        <p class="section-sub">Geniş ama derin — her katmanda üretim tecrübesi olan bir yığın.</p>
-      </div>
-      <div class="stack-grid">
-        {stack.map((g) => (
-          <div class="stack-group">
-            <h3>{g.group}</h3>
-            <ul>{g.items.map((i) => <li>{i}</li>)}</ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- EKRAN KAPALIYKEN -->
-  <section id="ekran-kapaliyken" class="wrap reveal" aria-labelledby="hobi-title">
-    <div class="section-head">
-      <p class="kicker">ekran kapalıyken</p>
-      <h2 class="section-title" id="hobi-title">Müdahaleye açık alanlar.</h2>
-      <p class="section-sub">Kod dışında hayatın devam ettiği yerler — bu düzen ne kadar disiplinliysem kod da o kadar düzenli.</p>
-    </div>
-    <ul class="hobbies">
-      {hobbies.map((h) => (
-        <li>
-          <span class="t">{h.t}</span>
-          <span class="w">{h.w}</span>
-        </li>
-      ))}
-    </ul>
-  </section>
-</Layout>
-
-<script>
-  // scroll reveal (reduced-motion'da CSS animasyonu kapatır)
-  const els = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.08 });
-    els.forEach((el) => io.observe(el));
-  } else {
-    els.forEach((el) => el.classList.add('in'));
+<style>
+  :global(body.home) {
+    height: 100svh;
+    overflow: hidden;
   }
-</script>
+
+  .poster {
+    --h: 30%; /* height of the field below the horizon */
+    --s: min(64vh, 46vw); /* sun */
+    position: relative;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+  }
+
+  .field {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--h);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 0 var(--pad) clamp(24px, 5vh, 48px);
+  }
+
+  .field nav {
+    display: flex;
+    gap: clamp(20px, 3vw, 40px);
+    font-size: clamp(18px, 1.8vw, 24px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .field a {
+    text-decoration: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+    transition: border-color 0.2s;
+  }
+
+  .field a:hover {
+    border-color: #fff;
+  }
+
+  .mail {
+    font-size: 15px;
+    opacity: 0.9;
+  }
+
+  .name {
+    position: absolute;
+    left: var(--pad);
+    top: clamp(28px, 7vh, 72px);
+    margin: 0;
+    font-weight: 600;
+    font-size: clamp(60px, 11.5vw, 184px);
+    line-height: 0.86;
+    letter-spacing: -0.055em;
+  }
+
+  .side {
+    position: absolute;
+    right: var(--pad);
+    top: clamp(34px, 8vh, 84px);
+    width: 240px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .role {
+    color: var(--ink-soft);
+  }
+
+  .motto em {
+    font: italic 400 26px/1.1 var(--serif);
+    color: var(--ink);
+  }
+
+  .motto {
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 720px) {
+    .poster {
+      --h: 26%;
+      --s: 78vw;
+    }
+    .side {
+      position: absolute;
+      left: var(--pad);
+      right: auto;
+      top: calc(clamp(28px, 7vh, 72px) + 2 * 0.86 * clamp(60px, 11.5vw, 184px) + 28px);
+    }
+    .mail {
+      display: none;
+    }
+  }
+
+</style>

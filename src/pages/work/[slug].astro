@@ -1,0 +1,163 @@
+---
+import Base from '../../layouts/Base.astro';
+import Ascii from '../../components/Ascii.astro';
+import { work } from '../../data/site';
+
+export function getStaticPaths() {
+  return work.map((w, i) => ({ params: { slug: w.slug }, props: { i } }));
+}
+
+const { i } = Astro.props;
+const w = work[i];
+const next = work[(i + 1) % work.length];
+---
+
+<Base title={w.title} description={`${w.title}: ${w.line}`}>
+  <main>
+    <section class:list={['hero', i % 2 ? 'g' : 'b']}>
+      <div class="frame hero-in">
+        <div>
+          <p class="where">{w.context} · {w.year}</p>
+          <h1>{w.title}</h1>
+          <p class="line">{w.line}</p>
+        </div>
+        <div class="art"><Ascii scene={w.slug} tone={i % 2 ? 'deep-green' : 'deep'} cell={7} /></div>
+      </div>
+    </section>
+
+    <div class="frame body">
+      <div class="story">
+        {w.body.map((p) => <p>{p}</p>)}
+      </div>
+      <aside>
+        <p class="kicker">Notes</p>
+        <ul class="notes">
+          {w.notes.map((n) => <li>{n}</li>)}
+        </ul>
+        <p class="kicker stack-k">Made with</p>
+        <p class="stack">{w.stack.join(', ')}</p>
+      </aside>
+    </div>
+
+    <div class="frame">
+      <a class="next" href={`/work/${next.slug}`}>
+        <span>Next</span>
+        {next.title} →
+      </a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .hero {
+    color: #fff;
+  }
+  .hero.b {
+    background: var(--blue);
+  }
+  .hero.g {
+    background: var(--green);
+  }
+  .hero-in {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+    align-items: end;
+    min-height: min(56vh, 520px);
+    padding-top: 72px;
+    padding-bottom: 56px;
+  }
+  .where {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(52px, 8vw, 112px);
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+  }
+  .line {
+    margin: 18px 0 0;
+    font: italic 400 clamp(22px, 2.4vw, 30px) / 1.2 var(--serif);
+    max-width: 18em;
+  }
+  .art {
+    aspect-ratio: 4 / 3;
+  }
+  .body {
+    display: grid;
+    grid-template-columns: 7fr 4fr;
+    gap: 64px;
+    padding-top: 72px;
+  }
+  .story {
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  .story p:first-child::first-line {
+    font-weight: 500;
+  }
+  .notes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .notes li {
+    padding: 12px 0 12px 22px;
+    border-top: 1px solid var(--rule);
+    position: relative;
+    font-size: 15.5px;
+    line-height: 1.5;
+  }
+  .notes li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 19px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .stack-k {
+    margin-top: 36px;
+  }
+  .stack {
+    color: var(--blue);
+    font-weight: 500;
+  }
+  .next {
+    display: block;
+    margin-top: 96px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    text-decoration: none;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .next span {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .next:hover {
+    color: var(--blue);
+  }
+  @media (max-width: 820px) {
+    .hero-in,
+    .body {
+      grid-template-columns: 1fr;
+    }
+    .art {
+      max-width: 360px;
+    }
+  }
+</style>

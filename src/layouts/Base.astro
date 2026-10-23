@@ -1,0 +1,141 @@
+---
+import '../styles/global.css';
+import Ascii from '../components/Ascii.astro';
+import { site, links } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  home?: boolean;
+}
+
+const { title, description = site.description, home = false } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}, ${site.location}`;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/about', label: 'About' },
+  { href: '/work', label: 'Work' },
+  { href: '/pictures', label: 'Pictures' },
+];
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  jobTitle: site.role,
+  worksFor: { '@type': 'Organization', name: 'E Dijital Bilişim Hizmetleri' },
+  homeLocation: { '@type': 'Place', name: 'İstanbul, Türkiye' },
+  sameAs: links.filter((l) => l.href.startsWith('https')).map((l) => l.href),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', site.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Plain-text summary for language models" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+  </head>
+  <body class:list={{ home }}>
+    {
+      !home && (
+        <header class="bar frame">
+          <a class="name" href="/">{site.name}</a>
+          <nav aria-label="Primary">
+            {nav.map((n) => (
+              <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>
+                {n.label}
+              </a>
+            ))}
+          </nav>
+        </header>
+      )
+    }
+    <slot />
+    {
+      !home && (
+        <footer class="end" aria-hidden="true">
+          <Ascii scene="meadow" cell={7} />
+        </footer>
+      )
+    }
+  </body>
+</html>
+
+<style>
+  body:not(.home) {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .name {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  nav {
+    display: flex;
+    gap: 28px;
+    font-size: 15px;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    padding-bottom: 3px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: var(--ink);
+    border-color: var(--green);
+  }
+
+  .end {
+    margin-top: auto;
+    padding-top: 120px;
+  }
+
+  .end :global(canvas) {
+    height: 210px;
+  }
+
+  @media (max-width: 520px) {
+    nav {
+      gap: 16px;
+    }
+  }
+</style>

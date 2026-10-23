@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import Ascii from '../../components/Ascii.astro';
+import { work } from '../../data/site';
+---
+
+<Base title="Work">
+  <main class="frame">
+    <div class="head">
+      <p class="kicker">Work</p>
+      <h1 class="display">Things I’ve built, <em>and a few still growing.</em></h1>
+    </div>
+    <ul class="cards">
+      {
+        work.map((w, i) => (
+          <li>
+            <a href={`/work/${w.slug}`}>
+              <div class:list={['plate', i % 2 ? 'g' : 'b']}>
+                <Ascii scene={w.slug} />
+              </div>
+              <div class="meta">
+                <h2>{w.title}</h2>
+                <span>{w.context}, {w.year}</span>
+              </div>
+              <p>{w.line}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Base>
+
+<style>
+  .head {
+    padding-top: 80px;
+    margin-bottom: 64px;
+    max-width: 900px;
+  }
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 56px 32px;
+  }
+  .cards a {
+    display: block;
+    text-decoration: none;
+  }
+  .plate {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.1, 1);
+  }
+  .plate.b {
+    background: var(--blue-tint);
+  }
+  .plate.g {
+    background: var(--green-tint);
+  }
+  .cards a:hover .plate {
+    transform: translateY(-6px);
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .meta span {
+    font-size: 13px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+  .cards p {
+    margin: 4px 0 0;
+    color: var(--ink-soft);
+  }
+</style>
