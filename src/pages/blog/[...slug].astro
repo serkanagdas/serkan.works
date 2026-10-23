@@ -1,0 +1,170 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { posts, day } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const all = await posts();
+  return all.map((post, i) => ({ params: { slug: post.id }, props: { post, older: all[i + 1] } }));
+}
+
+const { post, older } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <main class="frame">
+    <article>
+      <header>
+        <a class="back" href="/blog">← Blog</a>
+        <h1>{post.data.title}</h1>
+        <p class="desc">{post.data.description}</p>
+        <p class="meta">
+          <time datetime={post.data.date.toISOString().slice(0, 10)}>{day(post.data.date)}</time>
+          <a href={`/blog/tag/${post.data.tag}`}>#{post.data.tag}</a>
+        </p>
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+      {
+        older && (
+          <a class="next" href={`/blog/${older.id}`}>
+            <span>Older</span>
+            {older.data.title} →
+          </a>
+        )
+      }
+    </article>
+  </main>
+</Base>
+
+<style>
+  article {
+    max-width: 700px;
+    padding-top: 64px;
+  }
+  .back {
+    display: inline-block;
+    margin-bottom: 40px;
+    font-size: 15px;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--blue);
+  }
+  header {
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 36px;
+  }
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+  .desc {
+    font: italic 400 24px/1.25 var(--serif);
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-faint);
+  }
+  .meta a {
+    color: var(--green);
+    text-decoration: none;
+  }
+  .prose {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .prose :global(h2) {
+    margin: 2em 0 0.6em;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 1.1em;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.3em;
+  }
+  .prose :global(li) {
+    margin-bottom: 0.35em;
+  }
+  .prose :global(li::marker) {
+    color: var(--green);
+  }
+  .prose :global(a) {
+    text-decoration-color: var(--green);
+    text-underline-offset: 3px;
+  }
+  .prose :global(a:hover) {
+    color: var(--blue);
+  }
+  .prose :global(:not(pre) > code) {
+    font: 0.86em ui-monospace, Menlo, Consolas, monospace;
+    background: var(--blue-tint);
+    color: var(--blue);
+    padding: 0.12em 0.36em;
+    border-radius: 4px;
+  }
+  .prose :global(pre) {
+    margin: 0 0 1.4em;
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font: 14px/1.6 ui-monospace, Menlo, Consolas, monospace;
+    background: var(--blue-tint) !important;
+  }
+  .prose :global(blockquote) {
+    margin: 0 0 1.1em;
+    padding-left: 18px;
+    border-left: 2px solid var(--green);
+    color: var(--ink-soft);
+  }
+  .prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+  .prose :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 2.4em 0;
+  }
+  .next {
+    display: block;
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    text-decoration: none;
+  }
+  .next span {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .next:hover {
+    color: var(--blue);
+  }
+</style>

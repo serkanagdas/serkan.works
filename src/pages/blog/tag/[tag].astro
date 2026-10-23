@@ -1,0 +1,18 @@
+---
+import Base from '../../../layouts/Base.astro';
+import BlogIndex from '../../../components/BlogIndex.astro';
+import { posts, tags } from '../../../lib/blog';
+
+export function getStaticPaths() {
+  return tags.map((tag) => ({ params: { tag } }));
+}
+
+const { tag } = Astro.params;
+const tagged = (await posts()).filter((p) => p.data.tag === tag);
+---
+
+<Base title={`#${tag}`} description={`Blog posts tagged ${tag}.`}>
+  <main class="frame">
+    <BlogIndex posts={tagged} active={tag} />
+  </main>
+</Base>

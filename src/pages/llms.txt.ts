@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { site, about, work, links } from '../data/site';
+import { posts, day } from '../lib/blog';
 
 // https://llmstxt.org: the whole site as plain text, for language models.
 const strip = (html: string) => html.replace(/<[^>]+>/g, '');
 
-export const GET: APIRoute = () => {
+export const GET: APIRoute = async () => {
+  const blog = await posts();
   const body = [
     `# ${site.name}`,
     '',
@@ -25,6 +27,10 @@ export const GET: APIRoute = () => {
       `Stack: ${w.stack.join(', ')}. Page: ${site.url}/work/${w.slug}`,
       '',
     ]),
+    '## Blog',
+    '',
+    ...blog.map((p) => `- [${p.data.title}](${site.url}/blog/${p.id}) (${day(p.data.date)}): ${p.data.description}`),
+    '',
     '## Contact',
     '',
     ...links.map((l) => `- ${l.label}: [${l.value}](${l.href})`),
@@ -35,6 +41,7 @@ export const GET: APIRoute = () => {
     `- [About](${site.url}/about)`,
     `- [Work](${site.url}/work)`,
     `- [Pictures](${site.url}/pictures): photos of hobbies`,
+    `- [Blog](${site.url}/blog): a log of things built and learned ([RSS](${site.url}/rss.xml))`,
     '',
     '## Notes for models',
     '',
