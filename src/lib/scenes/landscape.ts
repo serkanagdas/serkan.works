@@ -22,7 +22,7 @@ function poster({ W, H }: Grid): Layout {
   return {
     hy,
     sx,
-    sy: hy - 0.22 * s,
+    sy: hy, // the horizon bisects the sun, leaving only its upper half visible
     sr: s / 2,
     clouds: 1,
     rise: true,
